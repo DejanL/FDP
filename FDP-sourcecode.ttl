@@ -1,0 +1,7346 @@
+@prefix : <http://www.lavbic.net/onto/FDP/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.lavbic.net/onto/FDP/> .
+
+:AbstractFactory :hasSourceCode :AbstractFactoryJavaRG ,
+                                :AbstractFactoryPseudocodeRG .
+
+###  http://www.lavbic.net/onto/FDP/AbstractFactoryJavaRG
+:AbstractFactoryJavaRG rdf:type owl:NamedIndividual ,
+                                :SourceCode ;
+                       :language "Java" ;
+                       rdfs:label "Abstract Factory Java source code"@en ;
+                       :programcode """
+
+/* Abstract Factory - Java Code Example */
+					   
+/**
+ * [PRODUCTS]
+ */
+ 
+/* [Family] - this is the common interface for <buttons family> */
+ 
+interface Button {
+	void paint();
+}
+
+
+
+/**
+ * All <products families> have the same varieties (MacOS/Windows).
+ */ 
+
+/* [Variants] - is a MacOS variant of a button */
+
+class MacOSButton implements Button {
+
+	@Override
+	public void paint() {
+		System.out.printf("%s [Button] created.%n", "MacOS");
+	}
+}
+
+/* [Variants] - is a Windows variant of a button */
+
+class WindowsButton implements Button {
+
+	@Override
+	public void paint() {
+		System.out.printf("%s [Button] created.%n", "Windows");
+	}
+}
+
+/**
+ * Checkboxes is the second product family. It has the same variants as buttons.
+ */
+ 
+/* [Family] - this is the common interface for <checkbox family> */
+
+interface Checkbox {
+	void paint();
+}
+
+/* [Variants] - is a MacOS variant of a checkbox */
+
+class MacOSCheckbox implements Checkbox {
+
+	@Override
+	public void paint() {
+		System.out.printf("%s [x] created.%n", "MacOS");
+	}
+}
+
+class WindowsCheckbox implements Checkbox {
+
+	@Override
+	public void paint() {
+		System.out.printf("%s [x] created.%n", "Windows");
+	}
+}
+
+/**
+ * [FACTORIES]
+ * -- Basic factory -> Abstract Factory
+ * -- Abstract factory knows about all (abstract) product types.
+ */
+
+interface GUIFactory {
+	Button createButton();
+	Checkbox createCheckbox();
+}
+
+/**
+ * [CONCRETE FACTORIES]
+ * -- Each concrete factory is responsible for creating products of a single variety 
+ */
+
+class MacOSFactory implements GUIFactory {
+
+	@Override
+	public Button createButton() {
+		return new MacOSButton();
+	}
+
+	@Override
+	public Checkbox createCheckbox() {
+		return new MacOSCheckbox();
+	}
+}
+
+class WindowsFactory implements GUIFactory {
+
+	@Override
+	public Button createButton() {
+		return new WindowsButton();
+	}
+
+	@Override
+	public Checkbox createCheckbox() {
+		return new WindowsCheckbox();
+	}
+}
+
+/**
+ * [CLIENT]
+ */
+
+class Application {
+	
+	private Button button;
+	private Checkbox checkbox;
+
+	public Application(GUIFactory factory) {
+		this.button = factory.createButton();
+		this.checkbox = factory.createCheckbox();
+	}
+
+	public void paint() {
+		this.button.paint();
+		this.checkbox.paint();
+	}
+}
+
+
+
+class AbstractFactoryTest {
+	
+	/**
+     * Client picks the factory type and creates it in run time (usually at
+     * initialization stage), depending on the configuration or environment
+     * variables.
+     */
+	
+	private static Application configureApplication() {
+		String osName = System.getProperty("os.name").toLowerCase();
+
+		if (osName.contains("mac")) {
+			GUIFactory macFactory = new MacOSFactory();
+			return new Application(macFactory);
+		} else if (osName.contains("windows")) {
+			GUIFactory winFactory = new WindowsFactory();
+			return new Application(winFactory);
+		}
+		return null;
+	}	
+	
+	public static void main(String[] args) {
+		Application app = configureApplication();
+		app.paint();
+	}
+}
+
+				 """ .
+
+###  http://www.lavbic.net/onto/FDP/AbstractFactoryPseudocodeRG
+:AbstractFactoryPseudocodeRG rdf:type owl:NamedIndividual ,
+                                      :SourceCode ;
+                             rdfs:label "Abstract Factory Pseudocode" ;
+                             :programcode """// The abstract factory interface declares a set of methods that
+// return different abstract products. These products are called
+// a family and are related by a high-level theme or concept.
+// Products of one family are usually able to collaborate among
+// themselves. A family of products may have several variants,
+// but the products of one variant are incompatible with the
+// products of another variant.
+interface GUIFactory is
+    method createButton():Button
+    method createCheckbox():Checkbox
+
+
+// Concrete factories produce a family of products that belong
+// to a single variant. The factory guarantees that the
+// resulting products are compatible. Signatures of the concrete
+// factory's methods return an abstract product, while inside
+// the method a concrete product is instantiated.
+class WinFactory implements GUIFactory is
+    method createButton():Button is
+        return new WinButton()
+    method createCheckbox():Checkbox is
+        return new WinCheckbox()
+
+// Each concrete factory has a corresponding product variant.
+class MacFactory implements GUIFactory is
+    method createButton():Button is
+        return new MacButton()
+    method createCheckbox():Checkbox is
+        return new MacCheckbox()
+
+
+// Each distinct product of a product family should have a base
+// interface. All variants of the product must implement this
+// interface.
+interface Button is
+    method paint()
+
+// Concrete products are created by corresponding concrete
+// factories.
+class WinButton implements Button is
+    method paint() is
+        // Render a button in Windows style.
+
+class MacButton implements Button is
+    method paint() is
+        // Render a button in macOS style.
+
+// Here's the base interface of another product. All products
+// can interact with each other, but proper interaction is
+// possible only between products of the same concrete variant.
+interface Checkbox is
+    method paint()
+
+class WinCheckbox implements Checkbox is
+    method paint() is
+        // Render a checkbox in Windows style.
+
+class MacCheckbox implements Checkbox is
+    method paint() is
+        // Render a checkbox in macOS style.
+
+
+// The client code works with factories and products only
+// through abstract types: GUIFactory, Button and Checkbox. This
+// lets you pass any factory or product subclass to the client
+// code without breaking it.
+class Application is
+    private field factory: GUIFactory
+    private field button: Button
+    constructor Application(factory: GUIFactory) is
+        this.factory = factory
+    method createUI() is
+        this.button = factory.createButton()
+    method paint() is
+        button.paint()
+
+
+// The application picks the factory type depending on the
+// current configuration or environment settings and creates it
+// at runtime (usually at the initialization stage).
+class ApplicationConfigurator is
+    method main() is
+        config = readApplicationConfigFile()
+
+        if (config.OS == \"Windows\") then
+            factory = new WinFactory()
+        else if (config.OS == \"Mac\") then
+            factory = new MacFactory()
+        else
+            throw new Exception(\"Error! Unknown operating system.\")
+
+        Application app = new Application(factory)""" ;
+                             rdfs:seeAlso "https://refactoring.guru/design-patterns/abstract-factory"^^xsd:anyURI .
+
+
+
+
+:Adapter :hasSourceCode :AdapterJavaRG ,
+                        :AdapterPseudocodeRG .
+						
+###  http://www.lavbic.net/onto/FDP/AdapterJavaRG
+:AdapterJavaRG rdf:type owl:NamedIndividual ,
+                        :SourceCode ;
+               rdfs:label "Adapter Java source code"@en ;
+               :language "Java" ;
+               :programcode """
+				/**
+				
+/* Adapter - Java Code Example */				
+				
+ * Dva znana adapterja v javi: 
+ * -- java.util.Arrays#asList() - acts as bridge between array-based and collection-based APIs
+ * -- java.util.Collections#list()
+ */
+
+/**
+ *   +---------------+
+ *   |       *       |
+ *   |   *       *   |
+ *   | *           * |  
+ *   |*             *|
+ *   | *           * |
+ *   |   *       *   |
+ *   |       *       |
+ *   +---------------+
+ *
+ */
+
+/**
+ * RoundHoles are compatible with RoundPegs and vice versa.
+ *
+ * SquarePegs are not compatible with RoundHoles (they were implemented by
+ * previous development team). But we have to integrate them into our program.
+ */
+
+// [Hole]
+
+class RoundHole {
+	
+	private double radius;
+	
+	public RoundHole(double radius) {
+		this.radius = radius;
+	}
+	
+	public double getRadius() {
+		return radius;
+	}
+	
+	public boolean fits(RoundPeg peg) {
+		return this.getRadius() >= peg.getRadius();
+	}
+}
+
+// [Peg]s
+
+class RoundPeg {
+	
+	private double radius;
+
+	public RoundPeg() {}
+
+	public RoundPeg(double radius) {
+		this.radius = radius;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+}
+
+class SquarePeg {
+	
+	private double width;
+
+	public SquarePeg(double width) {
+		this.width = width;
+	}
+
+	public double getWidth() {
+		return width;
+	}
+
+	public double getSquare() {
+		return this.width * this.width;
+	}
+}
+
+
+/**
+ * [ADAPTER] - omogoca postavljanje kvadratnega klina v okroglo luknjo;
+ *             implementira metodo okroglega klina radius(), ki vraca ustrezno 
+ *             preracunan radius za kvadratni klin
+ * 
+ * [square peg] --> (adapter) --> (square hole)
+ */
+ 
+class SquarePegAdapter extends RoundPeg {
+	
+	private SquarePeg peg;
+	
+	public SquarePegAdapter(SquarePeg peg) {
+		this.peg = peg;
+	}
+	
+	// na podlagi stranice <w> izracuna in vrne ustrezen radij <r>
+
+	@Override
+	public double getRadius() {
+		return Math.sqrt(Math.pow((peg.getWidth() / 2), 2) * 2);
+	}
+}
+
+
+public class AdapterDemo {
+	
+	public static void main(String[] args) {
+		double r = 5;
+		double w2 = 2;
+		double w20 = 20;
+		
+		// 1. okrogel klin v okroglo luknjo
+		RoundHole roundHole = new RoundHole(r);
+        RoundPeg roundPeg = new RoundPeg(r);
+		if (roundHole.fits(roundPeg)) {
+			System.out.println();
+			System.out.printf("Round <peg> r = %.0f fits round <hole> r = %1$.0f.%n", r);
+		}
+		
+		// 2. kvadratni klin v okroglo luknjo
+		SquarePeg smallSqarePeg = new SquarePeg(w2);
+		SquarePeg largeSqarePeg = new SquarePeg(w20);
+		// Ta primer resujemo:
+		// -- roundHole.fits(smallSqarePeg); 
+		
+		if (roundHole.fits(new SquarePegAdapter(smallSqarePeg))) {
+            System.out.printf("Square <peg> w = %.0f fits round <hole> r = %.0f.%n", w2, r);
+        }
+		if (!roundHole.fits(new SquarePegAdapter(largeSqarePeg))) {
+			System.out.printf("Square <peg> w = %.0f does not fit into round <hole> r = %.0f.%n", w20, r);
+		}
+	}
+}
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/AdapterPseudocodeRG
+:AdapterPseudocodeRG rdf:type owl:NamedIndividual ,
+                              :SourceCode ;
+                     rdfs:label "Adapter Pseudocode"@en ;
+                     :programcode """// Say you have two classes with compatible interfaces:
+// RoundHole and RoundPeg.
+class RoundHole is
+    constructor RoundHole(radius) { ... }
+
+    method getRadius() is
+        // Return the radius of the hole.
+
+    method fits(peg: RoundPeg) is
+        return this.getRadius() >= peg.getRadius()
+
+class RoundPeg is
+    constructor RoundPeg(radius) { ... }
+
+    method getRadius() is
+        // Return the radius of the peg.
+
+
+// But there's an incompatible class: SquarePeg.
+class SquarePeg is
+    constructor SquarePeg(width) { ... }
+
+    method getWidth() is
+        // Return the square peg width.
+
+
+// An adapter class lets you fit square pegs into round holes.
+// It extends the RoundPeg class to let the adapter objects act
+// as round pegs.
+class SquarePegAdapter extends RoundPeg is
+    // In reality, the adapter contains an instance of the
+    // SquarePeg class.
+    private field peg: SquarePeg
+
+    constructor SquarePegAdapter(peg: SquarePeg) is
+        this.peg = peg
+
+    method getRadius() is
+        // The adapter pretends that it's a round peg with a
+        // radius that could fit the square peg that the adapter
+        // actually wraps.
+        return peg.getWidth() * Math.sqrt(2) / 2
+
+
+// Somewhere in client code.
+hole = new RoundHole(5)
+rpeg = new RoundPeg(5)
+hole.fits(rpeg) // true
+
+small_sqpeg = new SquarePeg(5)
+large_sqpeg = new SquarePeg(10)
+hole.fits(small_sqpeg) // this won't compile (incompatible types)
+
+small_sqpeg_adapter = new SquarePegAdapter(small_sqpeg)
+large_sqpeg_adapter = new SquarePegAdapter(large_sqpeg)
+hole.fits(small_sqpeg_adapter) // true
+hole.fits(large_sqpeg_adapter) // false""" ;
+                     rdfs:seeAlso "https://refactoring.guru/design-patterns/adapter"^^xsd:anyURI .
+
+
+
+
+:Bridge :hasSourceCode :BridgeJavaRG ,
+                       :BridgePseudocodeRG .
+
+
+###  http://www.lavbic.net/onto/FDP/BridgeJavaRG
+:BridgeJavaRG rdf:type owl:NamedIndividual ,
+                       :SourceCode ;
+              rdfs:label "Bridge Java source code"@en ;
+              :language "Java" ;
+              :programcode """
+
+/* Bridge - Java Code Example */
+
+
+//
+// 1 - Abstraction (primarna hierarhija) -> delegates operation <Remote control>
+// 2 - Implementor (sekundarna hierarhija) --> izvede delegirano operacijo <Device>
+//
+
+
+/** 
+ * [Implementor] - interface for implementation classes
+ */
+
+interface Device {
+	
+	/* operationImp() */
+	boolean isEnabled();
+	void enable();
+	void disable();
+	
+	int getVolume();
+	void setVolume(int percent);
+	
+	int getChannel();
+	void setChannel(int channel);
+	
+	void printStatus();
+	
+	static void printStatus(String[] data) {
+		System.out.printf("+%s+%n", "-".repeat(35));
+		for (int i = 0; i < data.length; i++) {
+			System.out.printf("|%s%s|%n", data[i], " ".repeat(35 - data[i].length()));
+		}
+		System.out.printf("+%s+%n%n", "-".repeat(35));
+	}
+}
+
+/** 
+ * [Concrete implementors]
+ */
+
+class Radio implements Device {
+	
+	private boolean on;
+	private int volume;
+	private int channel;
+
+	public Radio() {
+		this.on = false;
+		this.volume = 30;
+		this.channel = 1;
+	}
+
+	/* operationImp() */
+	@Override
+	public boolean isEnabled() {
+		return this.on;
+	}
+
+	@Override
+	public void enable() {
+		this.on = true;
+	}
+
+	@Override
+	public void disable() {
+		this.on = false;
+	}
+
+	/* operationImp() */
+	@Override
+	public int getVolume() {
+		return this.volume;
+	}
+
+	@Override
+	public void setVolume(int volume) {
+		this.volume = volume;
+		if (this.volume > 100)
+			this.volume = 100;
+		else if (this.volume < 0)
+			this.volume = 0;
+	}
+
+	@Override
+	public int getChannel() {
+		return this.channel;
+	}
+
+	@Override
+	public void setChannel(int channel) {
+		this.channel = channel;
+	}
+
+	@Override
+	public void printStatus() {
+		Device.printStatus(new String[] {
+			"I'm radio receiver.", 
+			String.format("I'm %s.", this.on ? "ON" : "OFF"), 
+			String.format("Current volume is %d%%", this.volume),
+			String.format("Current channel is %d", this.channel)
+		});
+	}
+}
+
+class Tv implements Device {
+
+	private boolean on;
+	private int volume;
+	private int channel;
+
+	public Tv() {
+		this.on = false;
+		this.volume = 30;
+		this.channel = 1;	
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return this.on;
+	}
+
+	@Override
+	public void enable() {
+		this.on = true;
+	}
+
+	@Override
+	public void disable() {
+		this.on = false;
+	}
+
+	@Override
+	public int getVolume() {
+		return this.volume;
+	}
+
+	@Override
+	public void setVolume(int volume) {
+		this.volume = volume;
+		if (volume > 100)
+			this.volume = 100;
+		else if (volume < 0)
+			this.volume = 0;
+	}
+
+	@Override
+	public int getChannel() {
+		return channel;
+	}
+
+	@Override
+	public void setChannel(int channel) {
+		this.channel = channel;
+	}
+
+	@Override
+	public void printStatus() {
+		Device.printStatus(new String[] {
+			"I'm TV set.", 
+			String.format("I'm %s.", this.on ? "ON" : "OFF"), 
+			String.format("Current volume is %d%%", this.volume),
+			String.format("Current channel is %d", this.channel)
+		});
+	}
+}
+
+
+/** 
+ * [Abstraction] [Primary hierarchy]
+ *
+ * -- defines the interface for implementation classes
+ */
+
+interface Remote {
+	public static final int STEP = 10;
+	
+	/* operation() or function() */
+	void power();
+
+	/* operation() */
+	void volumeDown();
+	void volumeUp();
+
+	void channelDown();
+	void channelUp();
+}
+
+/** 
+ * [Redefined abstraction] (normal classes) 
+ *
+ * -- This class takes an instance of the implementation class (Implementator - 
+ *    Device device) and runs its methods.
+ */
+
+class BasicRemote implements Remote {
+	
+	// next line: I don't know what all the fuss is all about...
+	private Device device;
+
+	public BasicRemote() {}
+
+	public BasicRemote(Device device) {
+		this.device = device;
+	}
+
+	/* refinedFunction() */
+	@Override
+	public void power() {
+		System.out.println("Remote: power toggle");
+		if (device.isEnabled())
+			device.disable();
+		else
+			device.enable();
+	}
+
+	/* refinedFunction() */
+	@Override
+	public void volumeDown() {
+		System.out.println("Remote: volume down");
+		// implementor.operationImp()
+		device.setVolume(device.getVolume() - Remote.STEP);
+	}
+
+	@Override
+	public void volumeUp() {
+		System.out.println("Remote: volume up");
+		device.setVolume(device.getVolume() + Remote.STEP);
+	}
+
+	@Override
+	public void channelDown() {
+		System.out.println("Remote: channel down");
+		device.setChannel(device.getChannel() - 1);
+	}
+
+	@Override
+	public void channelUp() {
+		System.out.println("Remote: channel up");
+		device.setChannel(device.getChannel() + 1);
+	}
+	
+	public Device getDevice() {
+		return this.device;
+	}
+}
+
+class AdvancedRemote extends BasicRemote {
+
+	public AdvancedRemote(Device device) {
+		super(device);
+	}
+
+	public void mute() {
+		System.out.println("Remote: mute");
+		getDevice().setVolume(0);
+	}
+}
+
+
+/** 
+ * [Client] 
+ */
+
+public class DevicesRemotesTest {
+	
+	public static void testDevice(Device device) {
+		System.out.println("Tests with basic remote.");
+		BasicRemote basicRemote = new BasicRemote(device);
+		basicRemote.power();
+		device.printStatus();
+
+		System.out.println("Tests with advanced remote.");
+		AdvancedRemote advancedRemote = new AdvancedRemote(device);
+		advancedRemote.power();
+		advancedRemote.mute();
+		device.printStatus();
+	}	
+	
+	public static void main(String[] args) {
+		testDevice(new Tv());
+		testDevice(new Radio());
+	}
+}
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/BridgePseudocodeRG
+:BridgePseudocodeRG rdf:type owl:NamedIndividual ,
+                             :SourceCode ;
+                    rdfs:label "Bridge Pseudocode"@en ;
+                    :programcode """// The \"abstraction\" defines the interface for the \"control\"
+// part of the two class hierarchies. It maintains a reference
+// to an object of the \"implementation\" hierarchy and delegates
+// all of the real work to this object.
+class RemoteControl is
+    protected field device: Device
+    constructor RemoteControl(device: Device) is
+        this.device = device
+    method togglePower() is
+        if (device.isEnabled()) then
+            device.disable()
+        else
+            device.enable()
+    method volumeDown() is
+        device.setVolume(device.getVolume() - 10)
+    method volumeUp() is
+        device.setVolume(device.getVolume() + 10)
+    method channelDown() is
+        device.setChannel(device.getChannel() - 1)
+    method channelUp() is
+        device.setChannel(device.getChannel() + 1)
+
+
+// You can extend classes from the abstraction hierarchy
+// independently from device classes.
+class AdvancedRemoteControl extends RemoteControl is
+    method mute() is
+        device.setVolume(0)
+
+
+// The \"implementation\" interface declares methods common to all
+// concrete implementation classes. It doesn't have to match the
+// abstraction's interface. In fact, the two interfaces can be
+// entirely different. Typically the implementation interface
+// provides only primitive operations, while the abstraction
+// defines higher-level operations based on those primitives.
+interface Device is
+    method isEnabled()
+    method enable()
+    method disable()
+    method getVolume()
+    method setVolume(percent)
+    method getChannel()
+    method setChannel(channel)
+
+
+// All devices follow the same interface.
+class Tv implements Device is
+    // ...
+
+class Radio implements Device is
+    // ...
+
+
+// Somewhere in client code.
+tv = new Tv()
+remote = new RemoteControl(tv)
+remote.togglePower()
+
+radio = new Radio()
+remote = new AdvancedRemoteControl(radio)""" ;
+                    rdfs:seeAlso "https://refactoring.guru/design-patterns/bridge"^^xsd:anyURI .
+					
+
+ 
+:Builder :hasSourceCode :BuilderJavaRG ,
+                        :BuilderPseudocodeRG .
+						
+						
+###  http://www.lavbic.net/onto/FDP/BuilderJavaRG
+:BuilderJavaRG rdf:type owl:NamedIndividual ,
+                        :SourceCode ;
+               rdfs:label "Builder Java source code"@en ;
+               :language "Java" ;
+               :programcode """
+				 /* Builder - Java Code Example */
+
+/**
+ * Builder interface defines all possible ways to configure a product.
+ */
+ 
+interface Builder {
+    void setCarType(CarType type);
+    void setSeats(int seats);
+    void setEngine(Engine engine);
+    void setTransmission(Transmission transmission);
+    void setTripComputer(TripComputer tripComputer);
+    void setGPSNavigator(GPSNavigator gpsNavigator);
+}
+
+/**
+ * Concrete builders implement steps defined in the common interface.
+ */
+ 
+class CarBuilder implements Builder {
+    private CarType type;
+    private int seats;
+    private Engine engine;
+    private Transmission transmission;
+    private TripComputer tripComputer;
+    private GPSNavigator gpsNavigator;
+
+    public void setCarType(CarType type) {
+        this.type = type;
+    }
+
+    @Override
+    public void setSeats(int seats) {
+        this.seats = seats;
+    }
+
+    @Override
+    public void setEngine(Engine engine) {
+        this.engine = engine;
+    }
+
+    @Override
+    public void setTransmission(Transmission transmission) {
+        this.transmission = transmission;
+    }
+
+    @Override
+    public void setTripComputer(TripComputer tripComputer) {
+        this.tripComputer = tripComputer;
+    }
+
+    @Override
+    public void setGPSNavigator(GPSNavigator gpsNavigator) {
+        this.gpsNavigator = gpsNavigator;
+    }
+
+    public Car getResult() {
+        return new Car(type, seats, engine, transmission, tripComputer, gpsNavigator);
+    }
+}
+
+/**
+ * Unlike other creational patterns, Builder can construct unrelated products,
+ * which don't have the common interface.
+ *
+ * In this case we build a user manual for a car, using the same steps as we
+ * built a car. This allows to produce manuals for specific car models,
+ * configured with different features.
+ */
+ 
+class CarManualBuilder implements Builder{
+    private CarType type;
+    private int seats;
+    private Engine engine;
+    private Transmission transmission;
+    private TripComputer tripComputer;
+    private GPSNavigator gpsNavigator;
+
+    @Override
+    public void setCarType(CarType type) {
+        this.type = type;
+    }
+
+    @Override
+    public void setSeats(int seats) {
+        this.seats = seats;
+    }
+
+    @Override
+    public void setEngine(Engine engine) {
+        this.engine = engine;
+    }
+
+    @Override
+    public void setTransmission(Transmission transmission) {
+        this.transmission = transmission;
+    }
+
+    @Override
+    public void setTripComputer(TripComputer tripComputer) {
+        this.tripComputer = tripComputer;
+    }
+
+    @Override
+    public void setGPSNavigator(GPSNavigator gpsNavigator) {
+        this.gpsNavigator = gpsNavigator;
+    }
+
+    public Manual getResult() {
+        return new Manual(type, seats, engine, transmission, tripComputer, gpsNavigator);
+    }
+}
+
+/**
+ * Car is a product class.
+ */
+ 
+class Car {
+    private final CarType carType;
+    private final int seats;
+    private final Engine engine;
+    private final Transmission transmission;
+    private final TripComputer tripComputer;
+    private final GPSNavigator gpsNavigator;
+    private double fuel = 0;
+
+    public Car(CarType carType, int seats, Engine engine, Transmission transmission,
+               TripComputer tripComputer, GPSNavigator gpsNavigator) {
+        this.carType = carType;
+        this.seats = seats;
+        this.engine = engine;
+        this.transmission = transmission;
+        this.tripComputer = tripComputer;
+        if (this.tripComputer != null) {
+            this.tripComputer.setCar(this);
+        }
+        this.gpsNavigator = gpsNavigator;
+    }
+
+    public CarType getCarType() {
+        return carType;
+    }
+
+    public double getFuel() {
+        return fuel;
+    }
+
+    public void setFuel(double fuel) {
+        this.fuel = fuel;
+    }
+
+    public int getSeats() {
+        return seats;
+    }
+
+    public Engine getEngine() {
+        return engine;
+    }
+
+    public Transmission getTransmission() {
+        return transmission;
+    }
+
+    public TripComputer getTripComputer() {
+        return tripComputer;
+    }
+
+    public GPSNavigator getGpsNavigator() {
+        return gpsNavigator;
+    }
+}
+
+/**
+ * Car manual is another product. Note that it does not have the same ancestor
+ * as a Car. They are not related.
+ */
+
+class Manual {
+    private final CarType carType;
+    private final int seats;
+    private final Engine engine;
+    private final Transmission transmission;
+    private final TripComputer tripComputer;
+    private final GPSNavigator gpsNavigator;
+
+    public Manual(CarType carType, int seats, Engine engine, Transmission transmission,
+                  TripComputer tripComputer, GPSNavigator gpsNavigator) {
+        this.carType = carType;
+        this.seats = seats;
+        this.engine = engine;
+        this.transmission = transmission;
+        this.tripComputer = tripComputer;
+        this.gpsNavigator = gpsNavigator;
+    }
+
+    public String print() {
+        String info = "";
+        info += "Type of car: " + carType + "\n";
+        info += "Count of seats: " + seats + "\n";
+        info += "Engine: volume - " + engine.getVolume() + "; mileage - " + engine.getMileage() + "\n";
+        info += "Transmission: " + transmission + "\n";
+        if (this.tripComputer != null) {
+            info += "Trip Computer: Functional" + "\n";
+        } else {
+            info += "Trip Computer: N/A" + "\n";
+        }
+        if (this.gpsNavigator != null) {
+            info += "GPS Navigator: Functional" + "\n";
+        } else {
+            info += "GPS Navigator: N/A" + "\n";
+        }
+        return info;
+    }
+}
+
+
+enum CarType {
+    CITY_CAR, SPORTS_CAR, SUV
+}
+
+
+/** COMPONENTS */
+
+
+/**
+ * Just another feature of a car.
+ */
+ 
+class Engine {
+    private final double volume;
+    private double mileage;
+    private boolean started;
+
+    public Engine(double volume, double mileage) {
+        this.volume = volume;
+        this.mileage = mileage;
+    }
+
+    public void on() {
+        started = true;
+    }
+
+    public void off() {
+        started = false;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void go(double mileage) {
+        if (started) {
+            this.mileage += mileage;
+        } else {
+            System.err.println("Cannot go(), you must start engine first!");
+        }
+    }
+
+    public double getVolume() {
+        return volume;
+    }
+
+    public double getMileage() {
+        return mileage;
+    }
+}
+
+
+/**
+ * Just another feature of a car.
+ */
+ 
+GPSNavigator {
+    private String route;
+
+    public GPSNavigator() {
+        this.route = "221b, Baker Street, London  to Scotland Yard, 8-10 Broadway, London";
+    }
+
+    public GPSNavigator(String manualRoute) {
+        this.route = manualRoute;
+    }
+
+    public String getRoute() {
+        return route;
+    }
+}
+
+/**
+ * Just another feature of a car.
+ */
+ 
+enum Transmission {
+    SINGLE_SPEED, MANUAL, AUTOMATIC, SEMI_AUTOMATIC
+}
+
+/**
+ * Just another feature of a car.
+ */
+ 
+class TripComputer {
+
+    private Car car;
+
+    public void setCar(Car car) {
+        this.car = car;
+    }
+
+    public void showFuelLevel() {
+        System.out.println("Fuel level: " + car.getFuel());
+    }
+
+    public void showStatus() {
+        if (this.car.getEngine().isStarted()) {
+            System.out.println("Car is started");
+        } else {
+            System.out.println("Car isn't started");
+        }
+    }
+}
+
+
+/** DIRECTOR */
+
+
+/**
+ * Director defines the order of building steps. It works with a builder object
+ * through common Builder interface. Therefore it may not know what product is
+ * being built.
+ */
+ 
+class Director {
+
+    public void constructSportsCar(Builder builder) {
+        builder.setCarType(CarType.SPORTS_CAR);
+        builder.setSeats(2);
+        builder.setEngine(new Engine(3.0, 0));
+        builder.setTransmission(Transmission.SEMI_AUTOMATIC);
+        builder.setTripComputer(new TripComputer());
+        builder.setGPSNavigator(new GPSNavigator());
+    }
+
+    public void constructCityCar(Builder builder) {
+        builder.setCarType(CarType.CITY_CAR);
+        builder.setSeats(2);
+        builder.setEngine(new Engine(1.2, 0));
+        builder.setTransmission(Transmission.AUTOMATIC);
+        builder.setTripComputer(new TripComputer());
+        builder.setGPSNavigator(new GPSNavigator());
+    }
+
+    public void constructSUV(Builder builder) {
+        builder.setCarType(CarType.SUV);
+        builder.setSeats(4);
+        builder.setEngine(new Engine(2.5, 0));
+        builder.setTransmission(Transmission.MANUAL);
+        builder.setGPSNavigator(new GPSNavigator());
+    }
+}
+
+
+
+/** CLIENT */
+
+
+/**
+ * Demo class. Everything comes together here.
+ */
+
+public class TestBuilder {
+
+    public static void main(String[] args) {
+        Director director = new Director();
+
+        // Director gets the concrete builder object from the client
+        // (application code). That's because application knows better which
+        // builder to use to get a specific product.
+        CarBuilder builder = new CarBuilder();
+        director.constructSportsCar(builder);
+
+        // The final product is often retrieved from a builder object, since
+        // Director is not aware and not dependent on concrete builders and
+        // products.
+        Car car = builder.getResult();
+        System.out.println("Car built:\n" + car.getCarType());
+
+
+        CarManualBuilder manualBuilder = new CarManualBuilder();
+
+        // Director may know several building recipes.
+        director.constructSportsCar(manualBuilder);
+        Manual carManual = manualBuilder.getResult();
+        System.out.println("\nCar manual built:\n" + carManual.print());
+    }
+}
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/BuilderPseudocodeRG
+:BuilderPseudocodeRG rdf:type owl:NamedIndividual ,
+                              :SourceCode ;
+                     rdfs:label "Builder Pseudocode"@en ;
+                     :programcode """// Using the Builder pattern makes sense only when your products
+// are quite complex and require extensive configuration. The
+// following two products are related, although they don't have
+// a common interface.
+class Car is
+    // A car can have a GPS, trip computer and some number of
+    // seats. Different models of cars (sports car, SUV,
+    // cabriolet) might have different features installed or
+    // enabled.
+
+class Manual is
+    // Each car should have a user manual that corresponds to
+    // the car's configuration and describes all its features.
+
+
+// The builder interface specifies methods for creating the
+// different parts of the product objects.
+interface Builder is
+    method reset()
+    method setSeats(...)
+    method setEngine(...)
+    method setTripComputer(...)
+    method setGPS(...)
+
+// The concrete builder classes follow the builder interface and
+// provide specific implementations of the building steps. Your
+// program may have several variations of builders, each
+// implemented differently.
+class CarBuilder implements Builder is
+    private field car:Car
+
+    // A fresh builder instance should contain a blank product
+    // object which it uses in further assembly.
+    constructor CarBuilder() is
+        this.reset()
+
+    // The reset method clears the object being built.
+    method reset() is
+        this.car = new Car()
+
+    // All production steps work with the same product instance.
+    method setSeats(...) is
+        // Set the number of seats in the car.
+
+    method setEngine(...) is
+        // Install a given engine.
+
+    method setTripComputer(...) is
+        // Install a trip computer.
+
+    method setGPS(...) is
+        // Install a global positioning system.
+
+    // Concrete builders are supposed to provide their own
+    // methods for retrieving results. That's because various
+    // types of builders may create entirely different products
+    // that don't all follow the same interface. Therefore such
+    // methods can't be declared in the builder interface (at
+    // least not in a statically-typed programming language).
+    //
+    // Usually, after returning the end result to the client, a
+    // builder instance is expected to be ready to start
+    // producing another product. That's why it's a usual
+    // practice to call the reset method at the end of the
+    // `getProduct` method body. However, this behavior isn't
+    // mandatory, and you can make your builder wait for an
+    // explicit reset call from the client code before disposing
+    // of the previous result.
+    method getProduct():Car is
+        product = this.car
+        this.reset()
+        return product
+
+// Unlike other creational patterns, builder lets you construct
+// products that don't follow the common interface.
+class CarManualBuilder implements Builder is
+    private field manual:Manual
+
+    constructor CarManualBuilder() is
+        this.reset()
+
+    method reset() is
+        this.manual = new Manual()
+
+    method setSeats(...) is
+        // Document car seat features.
+
+    method setEngine(...) is
+        // Add engine instructions.
+
+    method setTripComputer(...) is
+        // Add trip computer instructions.
+
+    method setGPS(...) is
+        // Add GPS instructions.
+
+    method getProduct():Manual is
+        // Return the manual and reset the builder.
+
+
+// The director is only responsible for executing the building
+// steps in a particular sequence. It's helpful when producing
+// products according to a specific order or configuration.
+// Strictly speaking, the director class is optional, since the
+// client can control builders directly.
+class Director is
+    // The director works with any builder instance that the
+    // client code passes to it. This way, the client code may
+    // alter the final type of the newly assembled product.
+    // The director can construct several product variations
+    // using the same building steps.
+    method constructSportsCar(builder: Builder) is
+        builder.reset()
+        builder.setSeats(2)
+        builder.setEngine(new SportEngine())
+        builder.setTripComputer(true)
+        builder.setGPS(true)
+
+    method constructSUV(builder: Builder) is
+        // ...
+
+
+// The client code creates a builder object, passes it to the
+// director and then initiates the construction process. The end
+// result is retrieved from the builder object.
+class Application is
+
+    method makeCar() is
+        director = new Director()
+
+        CarBuilder builder = new CarBuilder()
+        director.constructSportsCar(builder)
+        Car car = builder.getProduct()
+
+        CarManualBuilder builder = new CarManualBuilder()
+        director.constructSportsCar(builder)
+
+        // The final product is often retrieved from a builder
+        // object since the director isn't aware of and not
+        // dependent on concrete builders and products.
+        Manual manual = builder.getProduct()""" ;
+                     rdfs:seeAlso "https://refactoring.guru/design-patterns/builder"^^xsd:anyURI .
+					 
+
+
+
+
+:ChainOfResponsibility  :hasSourceCode :ChainOfResponsibilityJavaRG ,
+                                       :ChainOfResponsibilityPseudocodeRG .
+
+
+
+###  http://www.lavbic.net/onto/FDP/ChainOfResponsibilityJavaRG
+:ChainOfResponsibilityJavaRG rdf:type owl:NamedIndividual ,
+                                      :SourceCode ;
+                             rdfs:label "Chain of Responsibility Java source code"@en ;
+                             :language "Java" ;
+                             :programcode """
+/* Chain of Responsibility - Java Code Example */
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+
+/**
+ * [Handler] interface.
+ *
+ * The Handler declares the interface, common for all concrete handlers. It usually 
+ * contains just a single method for handling requests - handle(request), but sometimes 
+ * it may also have  another method for setting the next handler on the chain.
+ */
+
+interface Handler {
+	// handle() method
+	boolean check(String email, String password);
+}
+
+
+/**
+ * [BaseHandler] class.
+ *
+ * Base Handler is an optional class where you can put the boilerplate code that’s  
+ * common to all handler classes.
+ *
+ * Usually, this class defines a field for storing a reference to the <next> handler.  
+ * The clients can build a chain by passing a handler to the constructor or setter of 
+ * the previous handler. The class may also implement the default handling behavior: 
+ * it can pass execution to the next handler after checking for its existence. 
+ */
+
+abstract class Middleware implements Handler {
+	
+	private Middleware next;
+	
+	/**
+	 * Builds chains of middleware objects.
+	 */
+	 
+	public static Middleware link(Middleware start, Middleware... chain) {
+		Middleware head = start;
+		for (Middleware nextInChain: chain) {
+			head.next = nextInChain;
+			head = nextInChain;
+		}
+		return start;
+	}
+	
+	/**
+	 * Subclasses will implement this method with concrete checks.
+	 */
+	
+	public abstract boolean check(String email, String password);
+	
+	/**
+	 * Run checks and returns "true" if we're in the last object in chain.
+	 */
+	
+	protected boolean checkNext(String email, String password) {
+		if (this.next == null)
+			return true;
+		return next.check(email, password);
+	}
+}
+
+
+/** 
+ * [Concrete Handlers] 
+ */
+
+
+/**
+ * [ConcreteHandler] class 1. 
+ *
+ * Concrete Handlers contain the actual code for processing requests. Upon receiving 
+ * a request, each handler must decide whether to process it and, additionally, whether 
+ * to pass it along the chain.
+ *
+ * Handlers are usually self-contained (samostojni) and immutable (nespremenljivi), 
+ * accepting  all necessary data just once via the constructor.
+ * 
+ * This Concrete Handler (1) checks whether there are too many failed login requests.
+ */
+
+class ThrottlingMiddleware extends Middleware {
+	
+	private int requestPerMinute;
+	private int requestNum;
+	private long currentTime;
+
+	public ThrottlingMiddleware(int requestPerMinute) {
+		this.requestPerMinute = requestPerMinute;
+		this.requestNum = 0;
+		this.currentTime = System.currentTimeMillis();
+	}
+	
+	/**
+	 * Please, note that checkNext() call can be inserted both in the beginning
+     * of this method and in the end.
+     *
+     * This gives much more flexibility than a simple loop over all middleware
+     * objects. For instance, an element of a chain can change the order of
+     * checks by running its check after all other checks.
+	 */
+	
+	@Override
+	public boolean check(String email, String password) {
+		if (System.currentTimeMillis() > currentTime + 60_000) {
+			this.requestNum = 0;
+			this.currentTime = System.currentTimeMillis();
+		}
+		
+		// canHandleRequest
+		// do some processing in the Concrete handler
+		requestNum++;
+		
+		if (requestNum > requestPerMinute) {
+			System.out.println("Request limit exceeded!");
+			Thread.currentThread().stop();
+		}
+		
+		// parent::handle(data)
+		return checkNext(email, password);
+	}
+}
+
+/**
+ * [ConcreteHandler] class 2.
+ * 
+ * Checks whether a user with the given credentials exists.
+ */
+
+class UserExistsMiddleware extends Middleware {
+	
+	private Server server;
+	
+	public UserExistsMiddleware(Server server) {
+		this.server = server;
+	}
+	
+	// handle() method
+	
+	@Override
+	public boolean check(String email, String password) {
+		if (!this.server.hasEmail(email)) {
+			System.out.println("This email is not registered!");
+			return false;
+		}
+		if (!this.server.isValidPassword(email, password)) {
+			System.out.println("Wrong password!");
+			return false;
+		}
+		return checkNext(email, password);
+	}
+	
+}
+
+/**
+ * [ConcreteHandler] class 3. 
+ *
+ * Checks a user's role.
+ */
+
+class RoleCheckMiddleware extends Middleware {
+	
+	// handle() method
+	
+	@Override
+	public boolean check(String email, String password) {
+		if (email.equals("admin@example.com")) {
+			System.out.println("Hello, admin!");
+			return true;
+		}
+		System.out.println("Hello, user!");
+		return checkNext(email, password);
+	}
+}
+
+
+/**
+ * Server class.
+ */
+
+class Server {
+
+	private Map<String, String> users;
+	private Middleware middleware;
+
+	public Server() {
+		this.users = new HashMap<>();
+	}
+
+	/**
+	 * Client passes a chain of object to server. This improves flexibility and
+	 * makes testing the server class easier.
+	 */
+
+	public void setMiddleware(Middleware middleware) {
+		this.middleware = middleware;
+	}
+
+	/**
+	 * Server gets email and password from client and sends the authorization
+	 * request to the chain.
+	 */
+	
+	public boolean logIn(String email, String password) {
+		if (middleware.check(email, password)) {
+			System.out.println("[Status]: Authorization has been successful!");
+
+			// <useful code> for authorized users.
+
+			return true;
+		}
+		return false;
+	}
+
+	public void register(String email, String password) {
+		users.put(email, password);
+	}
+	
+	/** pomozne metode, ki jih klicejo [ConcreteHandlers] */
+
+	public boolean hasEmail(String email) {
+		return users.containsKey(email);
+	}
+
+	public boolean isValidPassword(String email, String password) {
+		return users.get(email).equals(password);
+	}
+}
+
+/**
+ * [Client]
+ *
+ * The Client may compose chains just once or compose them dynamically, depending 
+ * on the application’s logic. Note that a request can be sent to any handler in 
+ * the chain—it doesn’t have to be the first one.
+ */
+
+public class MiddlewareTest {
+	
+	private static Server init() {
+		Server server = new Server();
+		server.register("admin@fri.si", "admin_geslo");
+		server.register("user@fri.si", "user_geslo");
+		
+		// 1. All checks are linked. 
+		//    Client can build various chains using the same components.
+		Middleware middleware = Middleware.link(
+			new ThrottlingMiddleware(2),
+			new UserExistsMiddleware(server),
+			new RoleCheckMiddleware()
+		);
+		
+		// 2. Server gets a chain from client code.
+		server.setMiddleware(middleware);
+		
+		return server;
+	}
+	
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		
+		Server server = init();
+		
+		boolean success = false;
+		while (!success) {	
+			System.out.print("Enter email: ");
+			String email = sc.next();
+			System.out.print("Input password: ");
+			String password = sc.next();
+			success = server.logIn(email, password);
+		}
+	}
+}
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/ChainOfResponsibilityPseudocodeRG
+:ChainOfResponsibilityPseudocodeRG rdf:type owl:NamedIndividual ,
+                                            :SourceCode ;
+                                   rdfs:label "Chain of Responsibility Pseudocode"@en ;
+                                   :programcode """// The handler interface declares a method for executing a
+// request.
+interface ComponentWithContextualHelp is
+    method showHelp()
+
+
+// The base class for simple components.
+abstract class Component implements ComponentWithContextualHelp is
+    field tooltipText: string
+
+    // The component's container acts as the next link in the
+    // chain of handlers.
+    protected field container: Container
+
+    // The component shows a tooltip if there's help text
+    // assigned to it. Otherwise it forwards the call to the
+    // container, if it exists.
+    method showHelp() is
+        if (tooltipText != null)
+            // Show tooltip.
+        else
+            container.showHelp()
+
+
+// Containers can contain both simple components and other
+// containers as children. The chain relationships are
+// established here. The class inherits showHelp behavior from
+// its parent.
+abstract class Container extends Component is
+    protected field children: array of Component
+
+    method add(child) is
+        children.add(child)
+        child.container = this
+
+
+// Primitive components may be fine with default help
+// implementation...
+class Button extends Component is
+    // ...
+
+// But complex components may override the default
+// implementation. If the help text can't be provided in a new
+// way, the component can always call the base implementation
+// (see Component class).
+class Panel extends Container is
+    field modalHelpText: string
+
+    method showHelp() is
+        if (modalHelpText != null)
+            // Show a modal window with the help text.
+        else
+            super.showHelp()
+
+// ...same as above...
+class Dialog extends Container is
+    field wikiPageURL: string
+
+    method showHelp() is
+        if (wikiPageURL != null)
+            // Open the wiki help page.
+        else
+            super.showHelp()
+
+
+// Client code.
+class Application is
+    // Every application configures the chain differently.
+    method createUI() is
+        dialog = new Dialog(\"Budget Reports\")
+        dialog.wikiPageURL = \"http://...\"
+        panel = new Panel(0, 0, 400, 800)
+        panel.modalHelpText = \"This panel does...\"
+        ok = new Button(250, 760, 50, 20, \"OK\")
+        ok.tooltipText = \"This is an OK button that...\"
+        cancel = new Button(320, 760, 50, 20, \"Cancel\")
+        // ...
+        panel.add(ok)
+        panel.add(cancel)
+        dialog.add(panel)
+
+    // Imagine what happens here.
+    method onF1KeyPress() is
+        component = this.getComponentAtMouseCoords()
+        component.showHelp() """ ;
+                                   rdfs:seeAlso "https://refactoring.guru/design-patterns/chain-of-responsibility"^^xsd:anyURI .
+								   
+
+
+
+:Command :hasSourceCode :CommandJavaRG ,
+                        :CommandPseudocodeRG .
+
+
+###  http://www.lavbic.net/onto/FDP/CommandJavaRG
+:CommandJavaRG rdf:type owl:NamedIndividual ,
+                        :SourceCode ;
+			   rdfs:label "Command Java source code"@en ;
+               :language "Java" ;
+               :programcode """
+import javax.swing.*;
+import java.awt.*;
+
+import java.util.Stack;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+
+/**
+ * [Command]
+ * 
+ * The Command interface usually declares just a single method for executing the command.
+ *
+ * + execute()
+ */
+
+abstract class Command {
+	
+	public Editor editor;
+	private String backup;
+	
+	public Command(Editor editor) {
+		this.editor = editor;
+	}
+	
+	public void backup() {
+		this.backup = this.editor.textField.getText();
+	}
+	
+	public void undo() {
+		this.editor.textField.setText(this.backup);
+	}
+	
+	// single method for executing the command
+	
+	public abstract boolean execute();
+}
+
+
+/**
+ * [ConcreteCommands]
+ *
+ * Concrete Commands implement various kinds of requests. A concrete command isn’t supposed 
+ * to perform the work on its own, but rather to pass the call to one of the business logic 
+ * objects. However, for the sake of simplifying the code, these classes can be merged.
+ *
+ * Parameters required to execute a method on a receiving object can be declared as fields 
+ * in the concrete command. You can make command objects immutable by only allowing the 
+ * initialization of these fields via the constructor.
+ * 
+ * - String backup;
+ *
+ * [ConcreteCommand] class references [Receiver] class that contains some business logic. 
+ * Most commands only handle the details of how a request is passed to the receiver, while 
+ * the receiver itself does the actual work.
+ *
+ * - Editor editor;
+ */
+
+/** SimpleCommand */
+
+class CopyCommand extends Command {
+	
+	/**
+	 * Some commands can implement simple operations on their own. However, complex
+	 * commands can accept one or several [receiver] objects along with any context 
+	 * data via the constructor.
+	 */
+	
+	public CopyCommand(Editor editor) {
+		super(editor);
+	}
+	
+	/**
+	 * Commands can delegate to any methods of a receiver.
+	 * receiver.do_something()
+	 *
+	 * -- in our case, receiver is object \"editor\"
+	 */
+	 
+	@Override
+	public boolean execute() {
+		editor.clipboard = editor.textField.getSelectedText();
+		return false;
+	}
+}
+
+
+class PasteCommand extends Command {
+	
+	public PasteCommand(Editor editor) {
+		super(editor);
+	}
+	
+	@Override
+	public boolean execute() {
+		if (editor.clipboard == null || editor.clipboard.isEmpty())
+			return false;
+		backup();
+		editor.textField.insert(editor.clipboard, editor.textField.getCaretPosition());
+		return true;
+	}
+}
+
+
+/** 
+ * [ComplexCommand]
+ *
+ * However, some commands can delegate more complex operations to other objects, 
+ * called \"receivers.\"
+ */
+
+class CutCommand extends Command {
+	
+	/**
+	 * Complex commands can accept one or several [receiver] objects along with any 
+	 * context data via the constructor.
+	 */	
+	
+	public CutCommand(Editor editor) {
+		super(editor);
+	}
+	
+	private String cutString(String source) {
+		String start = source.substring(0, editor.textField.getSelectionStart());
+		String end = source.substring(editor.textField.getSelectionEnd());
+		return start + end;
+	}	
+	
+	@Override
+	public boolean execute() {
+		if (editor.textField.getSelectedText().isEmpty()) 
+			return false;
+		backup();
+		String source = editor.textField.getText();
+		editor.clipboard = editor.textField.getSelectedText();
+		editor.textField.setText(cutString(source));
+		return true;
+	}
+}
+
+
+/** auxilary object */
+
+class CommandHistory {
+	
+	private Stack<Command> history; 
+	
+	public CommandHistory() {
+		this.history = new Stack<>();
+	}
+	
+	public void push(Command c) {
+		this.history.push(c);
+	}
+
+	public Command pop() {
+		return this.history.pop();
+	}
+	
+	public boolean isEmpty() { 
+		return history.isEmpty();
+	}
+}
+
+/**
+ * [Receiver]
+ * 
+ * The Receiver class contains some business logic. Almost any object may act as a  
+ * [receiver]. Most commands only handle the details of how a request is passed to 
+ * the receiver, while the receiver itself does the actual work.
+ *
+ * + operation(params) 
+ *
+ * The editor class has actual text editing operations.  Igra vlogo [Receiver]: vsi 
+ * ukazi na koncu prenesejo izvajanje na metode urejevalnika.
+ */
+
+/** 
+ * In this case class Editor is a [Receiver]
+ *
+ */
+
+
+class Editor {
+	
+	public JTextArea textField;
+	public String clipboard;
+	protected CommandHistory history;
+	
+	private JFrame frame;
+	
+	public Editor() {
+		this.history = new CommandHistory();	
+	}
+	
+	public void init() {
+		this.frame = new JFrame(\"Text editor (type & use buttons, Luke!)\");
+		this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		JPanel contentPane = new JPanel();
+		this.frame.setContentPane(contentPane);
+		
+		
+		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+		textField = new JTextArea();
+		textField.setLineWrap(true);
+		contentPane.add(textField);
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JButton ctrlC = new JButton(\"Ctrl+C\");
+		JButton ctrlX = new JButton(\"Ctrl+X\");
+		JButton ctrlV = new JButton(\"Ctrl+V\");
+		JButton ctrlZ = new JButton(\"Ctrl+Z\");
+		Editor editor = this;
+		
+		//
+		// Initialize commands.
+		// 
+				
+		/**
+		 * [Client]
+		 *
+		 * The Client creates and configures concrete command objects. The client must pass all 
+		 * of the request parameters, including a receiver instance, into the command’s constructor. 
+		 * After that, the resulting command may be associated with one or multiple senders.
+		 *
+		 * 1) naredi commands
+		 * 2) povezi jih z invokerji (prožilniki)
+		 * 
+		 * Command copy = new CopyCommand(editor);
+		 * button.setComamnd(copy):
+		 *
+		 */		
+		
+		// 1 - create Command objects
+		Command copyCmd = new CopyCommand(editor);
+		Command cutCmd = new CutCommand(editor);
+		Command pasteCmd = new PasteCommand(editor);
+		
+		
+		/**
+		 * [Invoker] or [Sender]
+		 *
+		 * The Sender class (aka invoker) is responsible for initiating requests. This class 
+		 * must have a field for storing a reference to a command object. The sender triggers 
+		 * that command instead of sending the request directly to the receiver. Note that the 
+		 * sender isn’t responsible for creating the command object. Usually, it gets a  
+		 * pre-created command from the client via the constructor.
+		 * 
+		 * + setCommand(command)
+		 * + executeCommand()
+		 *
+		 * The Invoker is associated with one or several commands. It sends a request
+		 * to the command.
+		 */
+		 
+		// 2 - create Invokers -> associate listener objects (of ActionListener type) 
+		//                        that executes commands. ActionListener objects are in 
+		//                        our case Invokers that call executeCommand()
+		ActionListener copyListen = new Test(() -> executeCommand(new CopyCommand(editor)));
+		ActionListener cutListen = new Test(() -> executeCommand(new CutCommand(editor)));
+		ActionListener pasteListen = new Test(() -> executeCommand(new PasteCommand(editor)));
+		ActionListener undoListen = new Test(() -> undo());
+		ctrlC.addActionListener(copyListen);
+		ctrlX.addActionListener(cutListen);
+		ctrlV.addActionListener(pasteListen);
+		ctrlZ.addActionListener(undoListen);
+		
+		buttonPanel.add(ctrlC);
+        buttonPanel.add(ctrlX);
+        buttonPanel.add(ctrlV);
+        buttonPanel.add(ctrlZ);
+        contentPane.add(buttonPanel);
+        this.frame.setSize(450, 200);
+        this.frame.setLocationRelativeTo(null);
+        this.frame.setVisible(true);
+	}
+
+	public void executeCommand(Command command) {
+		if (command.execute()) {
+			this.history.push(command);
+		}
+	}
+	
+	private void undo() {
+		if (history.isEmpty()) 
+			return;
+
+		Command command = history.pop();
+		if (command != null) {
+			command.undo();
+		}
+	}
+}
+
+/**
+ * Glavni program
+ */
+
+public class TextEditorCommandsDemo {
+	public static void main(String[] args) {
+		Editor editor = new Editor();
+		editor.init();
+	}	
+} """ ;
+                rdfs:seeAlso "https://refactoring.guru/design-patterns/command"^^xsd:anyURI .
+
+
+###  http://www.lavbic.net/onto/FDP/CommandPseudocodeRG
+:CommandPseudocodeRG rdf:type owl:NamedIndividual ,
+                              :SourceCode ;
+					 rdfs:label "Command Pseudocode"@en ;
+                     :programcode """// The base command class defines the common interface for all
+// concrete commands.
+abstract class Command is
+    protected field app: Application
+    protected field editor: Editor
+    protected field backup: text
+
+    constructor Command(app: Application, editor: Editor) is
+        this.app = app
+        this.editor = editor
+
+    // Make a backup of the editor's state.
+    method saveBackup() is
+        backup = editor.text
+
+    // Restore the editor's state.
+    method undo() is
+        editor.text = backup
+
+    // The execution method is declared abstract to force all
+    // concrete commands to provide their own implementations.
+    // The method must return true or false depending on whether
+    // the command changes the editor's state.
+    abstract method execute()
+
+
+// The concrete commands go here.
+class CopyCommand extends Command is
+    // The copy command isn't saved to the history since it
+    // doesn't change the editor's state.
+    method execute() is
+        app.clipboard = editor.getSelection()
+        return false
+
+class CutCommand extends Command is
+    // The cut command does change the editor's state, therefore
+    // it must be saved to the history. And it'll be saved as
+    // long as the method returns true.
+    method execute() is
+        saveBackup()
+        app.clipboard = editor.getSelection()
+        editor.deleteSelection()
+        return true
+
+class PasteCommand extends Command is
+    method execute() is
+        saveBackup()
+        editor.replaceSelection(app.clipboard)
+        return true
+
+// The undo operation is also a command.
+class UndoCommand extends Command is
+    method execute() is
+        app.undo()
+        return false
+
+
+// The global command history is just a stack.
+class CommandHistory is
+    private field history: array of Command
+
+    // Last in...
+    method push(c: Command) is
+        // Push the command to the end of the history array.
+
+    // ...first out
+    method pop():Command is
+        // Get the most recent command from the history.
+
+
+// The editor class has actual text editing operations. It plays
+// the role of a receiver: all commands end up delegating
+// execution to the editor's methods.
+class Editor is
+    field text: string
+
+    method getSelection() is
+        // Return selected text.
+
+    method deleteSelection() is
+        // Delete selected text.
+
+    method replaceSelection(text) is
+        // Insert the clipboard's contents at the current
+        // position.
+
+
+// The application class sets up object relations. It acts as a
+// sender: when something needs to be done, it creates a command
+// object and executes it.
+class Application is
+    field clipboard: string
+    field editors: array of Editors
+    field activeEditor: Editor
+    field history: CommandHistory
+
+    // The code which assigns commands to UI objects may look
+    // like this.
+    method createUI() is
+        // ...
+        copy = function() { executeCommand(
+            new CopyCommand(this, activeEditor)) }
+        copyButton.setCommand(copy)
+        shortcuts.onKeyPress(\"Ctrl+C\", copy)
+
+        cut = function() { executeCommand(
+            new CutCommand(this, activeEditor)) }
+        cutButton.setCommand(cut)
+        shortcuts.onKeyPress(\"Ctrl+X\", cut)
+
+        paste = function() { executeCommand(
+            new PasteCommand(this, activeEditor)) }
+        pasteButton.setCommand(paste)
+        shortcuts.onKeyPress(\"Ctrl+V\", paste)
+
+        undo = function() { executeCommand(
+            new UndoCommand(this, activeEditor)) }
+        undoButton.setCommand(undo)
+        shortcuts.onKeyPress(\"Ctrl+Z\", undo)
+
+    // Execute a command and check whether it has to be added to
+    // the history.
+    method executeCommand(command) is
+        if (command.execute())
+            history.push(command)
+
+    // Take the most recent command from the history and run its
+    // undo method. Note that we don't know the class of that
+    // command. But we don't have to, since the command knows
+    // how to undo its own action.
+    method undo() is
+        command = history.pop()
+        if (command != null)
+            command.undo() """ ;
+                     rdfs:seeAlso "https://refactoring.guru/design-patterns/command"^^xsd:anyURI .
+
+
+
+
+
+:Composite :hasSourceCode :CompositeJavaRG ,
+                          :CompositePseudocodeRG .
+						  
+
+###  http://www.lavbic.net/onto/FDP/CompositeJavaRG
+:CompositeJavaRG rdf:type owl:NamedIndividual ,
+                          :SourceCode ;
+				 rdfs:label "Composite Java source code"@en ;
+                 :language "Java" ;
+                 :programcode """
+				 
+/* Composite - Java Code Example */
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.BasicStroke;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import java.awt.Canvas;
+import javax.swing.JPanel;
+import javax.swing.JFrame;
+import javax.swing.BorderFactory;
+import javax.swing.WindowConstants;
+import javax.swing.border.Border;
+
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
+
+
+
+/**
+ * [Component]
+ * 
+ * The Component interface describes operations that are common to both simple and 
+ * complex elements of the tree.
+ */
+
+interface Shape {
+	
+	int getX();
+	int getY();
+	int getWidth();
+	int getHeight();
+	
+	boolean isInsideBounds(int x, int y);
+	boolean isSelected();
+	
+	void select();
+	void unSelect();
+	void paint(Graphics g);
+	void move(int x, int y);
+}
+
+/** 
+ * Class [BaseShape] -> Abstract shape with basic functionality
+ */
+
+abstract class BaseShape implements Shape {
+	
+	private int x;
+	private int y;
+	private Color color;
+	private boolean selected;
+
+	public BaseShape(int x, int y, Color color) {
+		this.x = x;
+		this.y = y;
+		this.color = color;
+		this.selected = false;
+	}
+
+	@Override
+	public int getX() {
+		return this.x;
+	}
+
+	@Override
+	public int getY() {
+		return this.y;
+	}
+
+	@Override
+	public int getWidth() {
+		return 0;
+	}
+
+	@Override
+	public int getHeight() {
+		return 0;
+	}
+
+	@Override
+	public void move(int x, int y) {
+		this.x += x;
+		this.y += y;
+	}
+
+	@Override
+	public boolean isInsideBounds(int x, int y) {
+		return (x > getX() && x < (getX() + getWidth()) && 
+				y > getY() && y < (getY() + getHeight()));
+	}
+
+	@Override
+	public void select() {
+		this.selected = true;
+	}
+
+	@Override
+	public void unSelect() {
+		this.selected = false;
+	}
+
+	@Override
+	public boolean isSelected() {
+		return this.selected;
+	}
+
+	public void enableSelectionStyle(Graphics g) {
+		g.setColor(Color.LIGHT_GRAY);
+		Graphics2D g2 = (Graphics2D) g;
+		float[] dash1 = { 2.0f };
+		g2.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 2.0f, dash1, 0.0f));
+	}
+
+	public void disableSelectionStyle(Graphics g) {
+		g.setColor(this.color);
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setStroke(new BasicStroke());
+	}
+
+	@Override
+	public void paint(Graphics g) {
+		if (this.isSelected())
+			this.enableSelectionStyle(g);
+		else
+			this.disableSelectionStyle(g);
+
+		// ...
+	}
+}
+
+/**
+ * [Leaf]
+ *
+ * The Leaf is a basic element of a tree that doesn’t have sub-elements. 
+ * Usually, leaf components end up doing most of the real work, since they don’t 
+ * have anyone to delegate the work to.
+ */
+
+class Dot extends BaseShape {
+	
+	private static final int DOT_SIZE = 3;
+
+	public Dot(int x, int y, Color color) {
+		super(x, y, color);
+	}
+
+	@Override
+	public int getWidth() {
+		return Dot.DOT_SIZE;
+	}
+
+	@Override
+	public int getHeight() {
+		return Dot.DOT_SIZE;
+	}
+
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
+		int x = getX();
+		int y = getY();
+		g.fillRect(x - 1, y - 1, getWidth(), getHeight());
+	}
+}
+
+/**
+ * [Leaf]
+ *
+ * The Leaf is a basic element of a tree that doesn’t have sub-elements. 
+ * Usually, leaf components end up doing most of the real work, since they don’t 
+ * have anyone to delegate the work to.
+ */
+
+class Circle extends BaseShape {
+
+	private int radius;
+
+	public Circle(int x, int y, int radius, Color color) {
+		super(x, y, color);
+		this.radius = radius;
+	}
+
+	@Override
+	public int getWidth() {
+		return 2 * this.radius;
+	}
+
+	@Override
+	public int getHeight() {
+		return 2 * this.radius;
+	}
+
+	public void paint(Graphics g) {
+		super.paint(g);
+		int x = getX();
+		int y = getY();
+		g.drawOval(x, y, getWidth() - 1, getHeight() - 1);
+	}
+}
+
+/**
+ * [Leaf]
+ *
+ * The Leaf is a basic element of a tree that doesn’t have sub-elements. 
+ * Usually, leaf components end up doing most of the real work, since they don’t 
+ * have anyone to delegate the work to.
+ */
+
+class Rectangle extends BaseShape {
+	
+	private int width;
+	private int height;
+
+	public Rectangle(int x, int y, int width, int height, Color color) {
+		super(x, y, color);
+		this.width = width;
+		this.height = height;
+	}
+
+	@Override
+	public int getWidth() {
+		return this.width;
+	}
+
+	@Override
+	public int getHeight() {
+		return this.height;
+	}
+
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
+		int x = getX();
+		int y = getY();
+		g.drawRect(x, y, getWidth() - 1, getHeight() - 1);
+	}
+}
+
+/**
+ * [Composite] ->  which consists of other shape objects
+ * 
+ * The Container (aka composite) is an element that has sub-elements: leaves or other containers. 
+ * A container doesn’t know the concrete classes of its children. It works with all sub-elements 
+ * only via the component interface.
+ *
+ * -- delegates the work to its child components.
+ */
+
+class CompoundShape extends BaseShape {
+
+	private List<Shape> children;
+
+	// varargs: variable-length arguments is a feature that allows the method to accept 
+	//          variable number of arguments (zero or more)
+	
+	public CompoundShape(Shape... components) {
+		super(0, 0, Color.BLACK);
+		this.children = new ArrayList<>();
+		this.add(components);
+	}
+
+	public void add(Shape component) {
+		this.children.add(component);
+	}
+
+	public void add(Shape... components) {
+		this.children.addAll(Arrays.asList(components));
+	}
+
+	public void remove(Shape child) {
+		this.children.remove(child);
+	}
+
+	public void remove(Shape... components) {
+		this.children.removeAll(Arrays.asList(components));
+	}
+
+	public void clear() {
+		this.children.clear();
+	}
+
+	@Override
+	public int getX() {
+		if (this.children.size() == 0)
+			return 0;
+		Shape firstChild = this.children.get(0);
+		int x = firstChild.getX();
+		for (Shape child : this.children) {
+			if (child.getX() < x)
+				x = child.getX();
+		}
+		return x;
+	}
+
+	@Override
+	public int getY() {
+		if (this.children.size() == 0)
+			return 0;
+		Shape firstChild = this.children.get(0);
+		int y = firstChild.getY();
+		for (Shape child : this.children) {
+			if (child.getY() < y)
+				y = child.getY();
+		}
+		return y;
+	}
+
+	@Override
+	public int getWidth() {
+		int maxWidth = 0;
+		int x = this.getX();
+		for (Shape child : this.children) {
+			int childsRelativeX = child.getX() - x;
+			int childWidth = childsRelativeX + child.getWidth();
+			if (childWidth > maxWidth) {
+				maxWidth = childWidth;
+			}
+		}
+		return maxWidth;
+	}
+
+	@Override
+	public int getHeight() {
+		int maxHeight = 0;
+		int y = this.getY();
+		for (Shape child : this.children) {
+			int childsRelativeY = child.getY() - y;
+			int childHeight = childsRelativeY + child.getHeight();
+			if (childHeight > maxHeight) {
+				maxHeight = childHeight;
+			}
+		}
+		return maxHeight;
+	}
+
+	@Override
+	public void move(int x, int y) {
+		for (Shape child : this.children)
+			child.move(x, y);
+	}
+
+	@Override
+	public boolean isInsideBounds(int x, int y) {
+		for (Shape child : this.children) {
+			if (child.isInsideBounds(x, y))
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void unSelect() {
+		super.unSelect();
+		for (Shape child : this.children) {
+			child.unSelect();
+		}
+	}
+
+	public boolean selectChildAt(int x, int y) {
+		for (Shape child : this.children) {
+			if (child.isInsideBounds(x, y)) {
+				child.select();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void paint(Graphics g) {
+		if (isSelected()) {
+			enableSelectionStyle(g);
+			g.drawRect(this.getX() - 1, this.getY() - 1, getWidth() + 1, getHeight() + 1);
+			disableSelectionStyle(g);
+		}
+		for (Shape child : this.children) {
+			child.paint(g);
+		}
+	}
+}
+
+
+
+/** 
+ * ImageEditor  ->  Shape editor
+ */
+
+class ImageEditor {
+	
+	private EditorCanvas canvas;
+	private CompoundShape allShapes;
+
+	public ImageEditor() {
+		this.allShapes = new CompoundShape();
+		this.canvas = new EditorCanvas();
+	}
+
+	public void loadShapes(Shape... shapes) {
+		this.allShapes.clear();
+		this.allShapes.add(shapes);
+		canvas.refresh();
+	}
+	
+	public CompoundShape getAllShapes() {
+		return this.allShapes;
+	}
+	
+	 
+	/**
+	 * [Client]  ->  [EditorCanvas]
+	 *
+	 * The Client works with all elements through the component interface. As a result, 
+	 * the client can work in the same way with both simple or complex elements of the tree.
+	 */
+
+	private class EditorCanvas extends Canvas {
+		
+		private static final int PADDING = 10;
+		private JFrame frame;
+
+		public EditorCanvas() {
+			this.createFrame();
+			this.refresh();
+			addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					ImageEditor.this.allShapes.unSelect();
+					ImageEditor.this.allShapes.selectChildAt(e.getX(), e.getY());
+					e.getComponent().repaint();
+				}
+			});
+		}
+
+		public void createFrame() {
+			this.frame = new JFrame();
+			this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+			this.frame.setLocationRelativeTo(null);
+
+			JPanel contentPanel = new JPanel();
+			Border padding = BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING);
+			contentPanel.setBorder(padding);
+			this.frame.setContentPane(contentPanel);
+
+			this.frame.add(this);
+			this.frame.setVisible(true);
+			this.frame.getContentPane().setBackground(Color.LIGHT_GRAY);
+		}
+
+		public int getWidth() {
+			return allShapes.getX() + allShapes.getWidth() + EditorCanvas.PADDING;
+		}
+
+		public int getHeight() {
+			return allShapes.getY() + allShapes.getHeight() + EditorCanvas.PADDING;
+		}
+
+		public void refresh() {
+			this.setSize(this.getWidth(), this.getHeight());
+			this.frame.pack();
+		}
+
+		public void paint(Graphics g) {
+			ImageEditor.this.allShapes.paint(g);
+		}
+	}
+}
+
+
+/**
+ * [TestComposite] client
+ */
+
+public class TestComposite {
+	public static void main(String[] args) {
+		ImageEditor editor = new ImageEditor();
+
+		editor.loadShapes(
+			new Circle(10, 10, 10, Color.BLUE),
+
+			new CompoundShape(
+				new Circle(110, 110, 50, Color.RED),
+				new Dot(160, 160, Color.RED)
+			),
+
+			new CompoundShape(
+				new Rectangle(250, 250, 100, 100, Color.GREEN),
+				new Dot(240, 240, Color.GREEN),
+				new Dot(240, 360, Color.GREEN),
+				new Dot(360, 360, Color.GREEN),
+				new Dot(360, 240, Color.GREEN)
+			)
+		);
+	}
+}
+
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/CompositePseudocodeRG
+:CompositePseudocodeRG rdf:type owl:NamedIndividual ,
+                                :SourceCode ;
+					   rdfs:label "Composite Pseudocode"@en ;
+                       :programcode """// The component interface declares common operations for both
+// simple and complex objects of a composition.
+
+interface Graphic is
+    method move(x, y)
+    method draw()
+
+// The leaf class represents end objects of a composition. A
+// leaf object can't have any sub-objects. Usually, it's leaf
+// objects that do the actual work, while composite objects only
+// delegate to their sub-components.
+
+class Dot implements Graphic is
+    field x, y
+
+    constructor Dot(x, y) { ... }
+
+    method move(x, y) is
+        this.x += x, this.y += y
+
+    method draw() is
+        // Draw a dot at X and Y.
+
+// All component classes can extend other components.
+class Circle extends Dot is
+    field radius
+
+    constructor Circle(x, y, radius) { ... }
+
+    method draw() is
+        // Draw a circle at X and Y with radius R.
+
+// The composite class represents complex components that may
+// have children. Composite objects usually delegate the actual
+// work to their children and then \"sum up\" the result.
+
+class CompoundGraphic implements Graphic is
+    field children: array of Graphic
+
+    // A composite object can add or remove other components
+    // (both simple or complex) to or from its child list.
+    method add(child: Graphic) is
+        // Add a child to the array of children.
+
+    method remove(child: Graphic) is
+        // Remove a child from the array of children.
+
+    method move(x, y) is
+        foreach (child in children) do
+            child.move(x, y)
+
+    // A composite executes its primary logic in a particular
+    // way. It traverses recursively through all its children,
+    // collecting and summing up their results. Since the
+    // composite's children pass these calls to their own
+    // children and so forth, the whole object tree is traversed
+    // as a result.
+    method draw() is
+        // 1. For each child component:
+        //     - Draw the component.
+        //     - Update the bounding rectangle.
+        // 2. Draw a dashed rectangle using the bounding
+        // coordinates.
+
+
+// The client code works with all the components via their base
+// interface. This way the client code can support simple leaf
+// components as well as complex composites.
+
+class ImageEditor is
+    field all: CompoundGraphic
+
+    method load() is
+        all = new CompoundGraphic()
+        all.add(new Dot(1, 2))
+        all.add(new Circle(5, 3, 10))
+        // ...
+
+    // Combine selected components into one complex composite
+    // component.
+    method groupSelected(components: array of Graphic) is
+        group = new CompoundGraphic()
+        foreach (component in components) do
+            group.add(component)
+            all.remove(component)
+        all.add(group)
+        // All components will be drawn.
+        all.draw()""" ;
+                       rdfs:seeAlso "https://refactoring.guru/design-patterns/composite"^^xsd:anyURI .
+
+
+
+
+:Decorator :hasSourceCode :DecoratorJavaRG ,
+                          :DecoratorPseudocodeRG .
+
+
+###  http://www.lavbic.net/onto/FDP/DecoratorJavaRG
+:DecoratorJavaRG rdf:type owl:NamedIndividual ,
+                          :SourceCode ;
+			     rdfs:label "Decorator Java source code"@en ;
+                 :language "Java" ;
+                 :programcode """
+
+/** 
+ * Decorator - Java Code Example 
+ *
+ * Marko Poženel, UNI-LJ, FRI
+ */
+
+
+/** Window interface */
+
+interface Window {
+	void draw();
+	String getDescription();
+}
+
+/** 
+ * [REGULAR] window - Window without decorations 
+ */
+
+class BasicWindow implements Window {
+	
+	private int width;
+	private int height;
+	
+	public BasicWindow(int width, int height) {
+		this.width = width;
+		this.height = height;
+	}
+	
+	@Override
+	public String toString() {
+		String okno = "";
+		okno = okno + String.format("+%s+%n",  "-".repeat(this.width - 2));
+		for (int i = 0; i < this.height - 2; i++)
+			okno = okno + String.format("|%s|%n",  " ".repeat(this.width - 2));
+		okno = okno + String.format("+%s+%n",  "-".repeat(this.width - 2));	
+		return okno;
+	}
+	
+	@Override
+	public String getDescription() {
+		return "basic window";
+	}
+	
+	@Override
+	public void draw() {
+		System.out.println(this.toString());
+	}	
+}
+
+/** 
+ * Abstract [DECORATOR] 
+ */
+
+abstract class WindowDecorator implements Window {
+	
+	// window that receives decorations
+	private final Window window;
+	
+	public WindowDecorator(Window window) {
+		this.window = window; 
+	}
+	
+	// delegate 'window' results
+	
+	@Override
+	public void draw() {
+		this.window.draw();
+	}
+	
+	@Override
+	public String toString() {
+		return this.window.toString();
+	}	
+	
+	@Override
+	public String getDescription() {
+		return this.window.getDescription();
+	}
+	
+}
+
+/** 
+ * Concrete [DECORATOR] - adds vertical scrollbars 
+ */ 
+
+class VerticalScrollBarDecorator extends WindowDecorator {
+	
+	public VerticalScrollBarDecorator(Window window) {
+		super(window);
+	}
+
+	// simulira risovanje metode getVerticalScrollBar() na obstojece okno
+
+	@Override
+	public String toString() {
+		String[] lines = super.toString().split("\\r?\\n");
+		String izris = String.format("%s%n", lines[0]);
+		for (int i = 1; i < lines.length - 1; i++) {
+			String lside = lines[i].substring(0, lines[i].length() - 2);
+			String rside = lines[i].substring(lines[i].length() - 1);
+			izris = String.format("%s%s%s%s%n", izris, lside, getVerticalScrollBar(), rside);
+		}
+		izris = String.format("%s%s%n", izris, lines[lines.length - 1]);
+		return izris;
+	}
+	
+	private String getVerticalScrollBar() {
+		return "|";
+	}
+
+	@Override
+	public String getDescription() {
+		return super.getDescription() + ", including vertical scrollbars";
+	}	
+}
+
+/** 
+ * Concrete [DECORATOR] - adds horizontal scrollbars 
+ */ 
+
+class HorizontalScrollBarDecorator extends WindowDecorator {
+	
+	public HorizontalScrollBarDecorator(Window window) {
+		super(window);
+	}
+
+	// simulira risovanje metode getHorizontalScrollBar() na obstojece okno
+
+	@Override
+	public String toString() {
+		String simpleOkno = super.toString();
+		
+		String[] lines = simpleOkno.split("\\r?\\n");
+		String izris = "";
+		for (int i = 0; i < lines.length; i++) {
+			if (i == lines.length - 2) {
+				char lside = lines[i].charAt(0);
+				String hbar = getHorizontalScrollBar().repeat(lines[i].length() - 2);
+				char rside = lines[i].charAt(lines[i].length() - 1);
+				izris = String.format("%s%c%s%c%n", izris, lside, hbar, rside);
+			} else 
+				izris = String.format("%s%s%n", izris, lines[i]);
+		}
+		return izris;
+	}
+
+	private String getHorizontalScrollBar() {
+		return "-";
+	}
+
+	@Override
+	public String getDescription() {
+		return super.getDescription() + ", including horizontal scrollbars";
+	}	
+}
+
+
+/**
+ * Testni program
+ */
+
+public class DecoratedWindowTest {
+	
+	public static void main(String[] args) {
+		// 1 - vertical + horizontal
+		Window window = new BasicWindow(10, 5);
+		Window winVerHoriz = new HorizontalScrollBarDecorator(new VerticalScrollBarDecorator(window));
+
+		// window description
+		System.out.printf("%n%s%n", winVerHoriz.getDescription());
+		
+		// 2 - vertical -> draw
+		System.out.println();
+		Window winVertical = new VerticalScrollBarDecorator(new BasicWindow(10, 5));
+		System.out.println(winVertical);		
+		
+		// 3 - horizontal -> draw
+		System.out.println();
+		Window winHorizontal = new HorizontalScrollBarDecorator(new BasicWindow(10, 5));
+		System.out.println(winHorizontal);
+		
+	}
+}
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/DecoratorPseudocodeRG
+:DecoratorPseudocodeRG rdf:type owl:NamedIndividual ,
+                                :SourceCode ;
+					   rdfs:label "Decorator Pseudocode"@en ;
+                       :programcode """// The component interface defines operations that can be
+// altered by decorators.
+interface DataSource is
+    method writeData(data)
+    method readData():data
+
+// Concrete components provide default implementations for the
+// operations. There might be several variations of these
+// classes in a program.
+
+class FileDataSource implements DataSource is
+    constructor FileDataSource(filename) { ... }
+
+    method writeData(data) is
+        // Write data to file.
+
+    method readData():data is
+        // Read data from file.
+
+// The base decorator class follows the same interface as the
+// other components. The primary purpose of this class is to
+// define the wrapping interface for all concrete decorators.
+// The default implementation of the wrapping code might include
+// a field for storing a wrapped component and the means to
+// initialize it.
+
+class DataSourceDecorator implements DataSource is
+    protected field wrappee: DataSource
+
+    constructor DataSourceDecorator(source: DataSource) is
+        wrappee = source
+
+    // The base decorator simply delegates all work to the
+    // wrapped component. Extra behaviors can be added in
+    // concrete decorators.
+    method writeData(data) is
+        wrappee.writeData(data)
+
+    // Concrete decorators may call the parent implementation of
+    // the operation instead of calling the wrapped object
+    // directly. This approach simplifies extension of decorator
+    // classes.
+    method readData():data is
+        return wrappee.readData()
+
+// Concrete decorators must call methods on the wrapped object,
+// but may add something of their own to the result. Decorators
+// can execute the added behavior either before or after the
+// call to a wrapped object.
+
+class EncryptionDecorator extends DataSourceDecorator is
+    method writeData(data) is
+        // 1. Encrypt passed data.
+        // 2. Pass encrypted data to the wrappee's writeData
+        // method.
+
+    method readData():data is
+        // 1. Get data from the wrappee's readData method.
+        // 2. Try to decrypt it if it's encrypted.
+        // 3. Return the result.
+
+// You can wrap objects in several layers of decorators.
+
+class CompressionDecorator extends DataSourceDecorator is
+    method writeData(data) is
+        // 1. Compress passed data.
+        // 2. Pass compressed data to the wrappee's writeData
+        // method.
+
+    method readData():data is
+        // 1. Get data from the wrappee's readData method.
+        // 2. Try to decompress it if it's compressed.
+        // 3. Return the result.
+
+
+// Option 1. A simple example of a decorator assembly.
+
+class Application is
+    method dumbUsageExample() is
+        source = new FileDataSource(\"somefile.dat\")
+        source.writeData(salaryRecords)
+        // The target file has been written with plain data.
+
+        source = new CompressionDecorator(source)
+        source.writeData(salaryRecords)
+        // The target file has been written with compressed
+        // data.
+
+        source = new EncryptionDecorator(source)
+        // The source variable now contains this:
+        // Encryption > Compression > FileDataSource
+        source.writeData(salaryRecords)
+        // The file has been written with compressed and
+        // encrypted data.
+
+
+// Option 2. Client code that uses an external data source.
+// SalaryManager objects neither know nor care about data
+// storage specifics. They work with a pre-configured data
+// source received from the app configurator.
+
+class SalaryManager is
+    field source: DataSource
+
+    constructor SalaryManager(source: DataSource) { ... }
+
+    method load() is
+        return source.readData()
+
+    method save() is
+        source.writeData(salaryRecords)
+    // ...Other useful methods...
+
+
+// The app can assemble different stacks of decorators at
+// runtime, depending on the configuration or environment.
+
+class ApplicationConfigurator is
+    method configurationExample() is
+        source = new FileDataSource(\"salary.dat\")
+        if (enabledEncryption)
+            source = new EncryptionDecorator(source)
+        if (enabledCompression)
+            source = new CompressionDecorator(source)
+
+        logger = new SalaryManager(source)
+        salary = logger.load()
+    // ... """ ;
+                       rdfs:seeAlso "https://refactoring.guru/design-patterns/decorator"^^xsd:anyURI .
+
+
+
+
+
+:Facade :hasSourceCode :FacadeJavaRG ,
+                       :FacadePseudocodeRG .
+
+
+
+###  http://www.lavbic.net/onto/FDP/FacadeJavaRG
+:FacadeJavaRG rdf:type owl:NamedIndividual ,
+                       :SourceCode ;
+			  rdfs:label "Facade Java source code"@en ;
+              :language "Java" ;
+              :programcode """
+/* Facade - Java Code Example */
+
+
+/**
+ * Demo: the Facade simplifies communication with a complex video conversion framework.
+ */
+ 
+import java.io.File;
+
+/**
+ * These are some of the classes of a complex 3rd-party video
+ * conversion framework. We don't control that code, therefore
+ * can't simplify it.
+ */
+
+class VideoFile {
+
+	private String name;
+	private String codecType;
+	
+	public VideoFile(String name) {
+		this.name = name;
+		this.codecType = name.substring(name.indexOf(".") + 1);
+	}
+	
+	public String getCodecType() {
+		return codecType;
+	}
+
+	public String getName() {
+		return name;
+	}	
+}
+
+// [Codec]
+
+interface Codec { 
+	String getType();
+}
+
+class MPEG4CompressionCodec implements Codec {
+	@Override
+	public String getType() {
+		return "mp4";
+	}
+}
+
+class OggCompressionCodec implements Codec {
+	@Override
+	public String getType() {
+		return "ogg";
+	}	
+}
+
+// [Codec Factory]
+
+class CodecFactory {
+	
+	public static Codec extract(VideoFile file) {
+		String type = file.getCodecType();
+		if (type.equals("mp4")) {
+			System.out.printf("CodecFactory: extracting <mpeg> audio...%n");
+			return new MPEG4CompressionCodec();
+		} else if (type.equals("ogg")) {
+			System.out.printf("CodecFactory: extracting <%s> audio...%n", type);
+			return new OggCompressionCodec();
+		}
+		return null;
+	}
+}
+
+// [BitrateReader]
+
+class BitrateReader {
+	
+	public static VideoFile read(VideoFile file, Codec codec) {
+		System.out.printf("BitrateReader: reading file...%n");
+		return file;
+	}
+
+	public static VideoFile convert(VideoFile buffer, Codec codec) {
+		String convertName = String.format("%s.%s", buffer.getName().split("\\.")[0], codec.getType());
+		System.out.printf("BitrateReader: writing file <%s>...%n", convertName);
+		return new VideoFile(convertName);
+	}
+}
+
+// [AudioMixer]
+
+class AudioMixer {
+	private static final String EXTENSION = ".tmp";
+	
+	public static File fix(VideoFile result) {
+		System.out.printf("AudioMixer: fixing audio...%n");
+		String fixedFile = String.format("%s%s", result.getName().split("\\.")[0], EXTENSION);  
+		return new File(fixedFile);
+	}
+}
+
+
+
+
+/**
+ * We create a [FACADE CLASS] to hide the framework's complexity
+ * behind a simple interface. It's a <trade-off> between
+ * <functionality> and <simplicity>.
+ */
+
+// VideoConverter --> isolating multiple dependencies within a single facade class.
+
+class VideoConversionFacade {
+	public File convertVideo(String fileName, String format) {
+		
+		System.out.println("VideoConversionFacade: conversion started.");
+		VideoFile file = new VideoFile(fileName);
+		System.out.printf(" ".repeat(4));
+		Codec sourceCodec = CodecFactory.extract(file);
+		
+		Codec destinationCodec = null;
+		if (format.equals("mp4"))
+			destinationCodec = new MPEG4CompressionCodec();
+		else if (format.equals("ogg"))
+			destinationCodec = new OggCompressionCodec();
+		
+		System.out.printf(" ".repeat(4));
+		VideoFile buffer = BitrateReader.read(file, sourceCodec);
+		System.out.printf(" ".repeat(4));
+		VideoFile intermediateResult = BitrateReader.convert(buffer, destinationCodec);
+		
+		System.out.printf(" ".repeat(4));
+		File result = AudioMixer.fix(intermediateResult);
+		System.out.println("VideoConversionFacade: conversion completed.");
+		return result;
+	}
+}
+
+
+
+/**
+ * Application classes don't depend on a billion classes
+ * provided by the complex framework. Also, if you decide to
+ * switch frameworks, you only need to rewrite the facade class.
+ */
+
+// Application
+
+public class FacadeDemo {
+	
+	public static void main(String[] args) {
+		System.out.println();
+		
+		VideoConversionFacade converter = new VideoConversionFacade();
+		File mp4Video = converter.convertVideo("tiktokvideo.ogg", "mp4");
+		
+		System.out.printf("%nR: %s%n", mp4Video);
+	}
+}
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/FacadePseudocodeRG
+:FacadePseudocodeRG rdf:type owl:NamedIndividual ,
+                             :SourceCode ;
+					rdfs:label "Facade Pseudocode"@en ;
+                    :programcode """// These are some of the classes of a complex 3rd-party video
+// conversion framework. We don't control that code, therefore
+// can't simplify it.
+
+class VideoFile
+// ...
+
+class OggCompressionCodec
+// ...
+
+class MPEG4CompressionCodec
+// ...
+
+class CodecFactory
+// ...
+
+class BitrateReader
+// ...
+
+class AudioMixer
+// ...
+
+
+// We create a facade class to hide the framework's complexity
+// behind a simple interface. It's a trade-off between
+// functionality and simplicity.
+
+class VideoConverter is
+    method convert(filename, format):File is
+        file = new VideoFile(filename)
+        sourceCodec = (new CodecFactory).extract(file)
+        if (format == \"mp4\")
+            destinationCodec = new MPEG4CompressionCodec()
+        else
+            destinationCodec = new OggCompressionCodec()
+        buffer = BitrateReader.read(filename, sourceCodec)
+        result = BitrateReader.convert(buffer, destinationCodec)
+        result = (new AudioMixer()).fix(result)
+        return new File(result)
+
+// Application classes don't depend on a billion classes
+// provided by the complex framework. Also, if you decide to
+// switch frameworks, you only need to rewrite the facade class.
+
+class Application is
+    method main() is
+        convertor = new VideoConverter()
+        mp4 = convertor.convert(\"funny-cats-video.ogg\", \"mp4\")
+        mp4.save() """ ;
+                    rdfs:seeAlso "https://refactoring.guru/design-patterns/facade"^^xsd:anyURI .
+
+
+
+
+:FactoryMethod :hasSourceCode :FactoryMethodJavaRG ,
+                              :FactoryMethodPseudocodeRG .
+
+
+
+
+###  http://www.lavbic.net/onto/FDP/FactoryMethodJavaRG
+:FactoryMethodJavaRG rdf:type owl:NamedIndividual ,
+                              :SourceCode ;
+					 rdfs:label "Factory Method Java source code"@en ;
+                     :language "Java" ;
+                     :programcode """
+/**
+ * FactoryMethod - Java Code Example 
+ * Source: https://nitin-code.medium.com/factory-pattern-c0c284530d40
+ */
+
+
+import java.util.List;
+import java.util.ArrayList;
+
+// Dependency Inversion Principle <-- PizzaStore and all concrete Products depend on Product Abstraction (Pizza)
+
+/** 
+ * [PRODUCT class], abstraction
+ *
+ * -- Factories produce products, and in the PizzaStore, our product is a Pizza.
+ */
+
+abstract class Pizza {
+	
+	private String name;
+	private String dough;
+	private String sauce;
+	private List<String> toppings;
+
+	public Pizza(String name, String dough, String sauce) {
+		this.name = name;
+		this.dough = dough;
+		this.sauce = sauce;
+		this.toppings = new ArrayList<String>();
+	}
+
+	public String getName() {
+		return name;
+	}
+	
+	public void addToppings(String[] tops) {
+		for (String topping : tops)
+			this.toppings.add(topping);
+	}
+
+	public String prepare() {
+		return String.format("preparing");
+	}
+
+	public String bake() {
+		return String.format("baking");
+	}
+
+	public String cut() {
+		return String.format("cutting");
+	}
+
+	public String box() {
+		return String.format("boxing");
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("+---- %s ----+%n", name));
+		sb.append(String.format("| %s%n", dough));
+		sb.append(String.format("| %s%n", sauce));
+		sb.append(String.format("| %s...%n", " ".repeat(9)));
+		for (String topping : toppings)
+			sb.append(String.format("| %s%n", topping));
+		sb.append(String.format("+%s+", "-".repeat(22)));
+		return sb.toString();
+	}
+}
+
+
+/** [CONCRETE PRODUCT classes] */
+
+
+class CheesePizza extends Pizza {
+	
+	public CheesePizza() {
+		super("Cheese Pizza", "Regular Crust", "Marinara Pizza Sauce");
+		addToppings(new String[] { "Fresh Mozzarella", "Parmesan" });
+	}
+}
+
+class ClamPizza extends Pizza {
+	
+	public ClamPizza() {
+		super("Clam Pizza", "Thin crust", "White garlic sauce");
+		addToppings(new String[] { "Clams", "Grated parmesan cheese" });
+	}
+}
+
+class PepperoniPizza extends Pizza {
+	
+	public PepperoniPizza() {
+		super("Pepperoni Pizza", "Crust", "Marinara sauce");
+		addToppings(new String[] { "Sliced Pepperoni", "Sliced Onion", "Grated parmesan cheese" });
+	}
+}
+
+class VeggiePizza extends Pizza {
+	
+	public VeggiePizza() {
+		super("Veggie Pizza", "Crust", "Marinara sauce");
+		addToppings(new String[] { 
+			"Shredded mozzarella", "Grated parmesan", "Diced onion", 
+			"Sliced mushrooms", "Sliced red pepper", "Sliced black olives"
+		});
+	}
+}
+
+
+
+/**
+ * [CREATOR] classes
+ *
+ * -- declares the factory method
+ * -- This is abstract creator class. It defines an <abstract factory method> 
+ *    that the subclasses implement to produce <products>.
+ */
+
+
+/* [Base factory class] --> [BASE FACTORY] */
+
+abstract interface PizzaFactory {
+	
+	/**
+	 * abstract Product factoryMethod(String type)
+	 * 
+	 * -- Concrete Creators override the base factory method so it returns 
+	 *    a different type of product.
+	 * -- superclass does not know, what kind of Product is actually created
+	 */
+	 
+	abstract Pizza createPizza(String type);
+}
+
+
+/**
+ * [Concrete creators] --> [CONCRETE FACTORY]
+ *
+ * -- menu at Tonys pizzerija includes mouth watering pizzas listed below...
+ */
+
+class TonysPizzaFactory implements PizzaFactory {
+
+	/** 
+	 * [FACTORY METHOD]
+	 *
+	 * A factory method handles object creation and encapsulates it in a subclass.
+	 * abstract Product factoryMethod(String type)
+	 */
+
+	public Pizza createPizza(String type) {
+		switch (type) {
+			case "cheese":
+				return new CheesePizza();
+			case "pepperoni":
+				return new PepperoniPizza();
+			case "clam":
+				return new ClamPizza();
+			case "veggie":
+				return new VeggiePizza();
+		}
+		return null;
+	}
+}
+
+
+
+/** 
+ * [Client] 
+ *
+ * This is the client of the factory. PizzaStore orders pizazs at Tonys Pizzerija.
+ */
+
+
+class PizzaStore {
+
+	private PizzaFactory factory;
+
+	public PizzaStore(PizzaFactory factory) { 
+		this.factory = factory;
+	}
+	
+	public Pizza orderPizza(String type) {
+		// the creator never really knows which concrete product was produced.
+		// Product product = factory.factoryMethod()
+		Pizza pizza = factory.createPizza(type);
+
+		String prepared = pizza.prepare();
+		String baked = pizza.bake();
+		String cut = pizza.cut();
+		String boxed = pizza.box();
+		
+		System.out.printf("%s: %s, %s, %s, %s...%n", pizza.getName(), prepared, baked, cut, boxed);
+		return pizza;
+	}
+}
+
+public class PizzaFactoryTest {
+
+	public static void main(String[] args) {
+		
+		PizzaFactory factory = new TonysPizzaFactory();
+		PizzaStore store = new PizzaStore(factory);
+		
+		System.out.println();
+		Pizza pizza = store.orderPizza("cheese");
+		System.out.printf("We ordered a %s%n%n", pizza.getName());
+		System.out.println(pizza);
+
+		System.out.println();
+		Pizza veggiePizza = store.orderPizza("veggie");
+		System.out.printf("We ordered a %s%n%n", veggiePizza.getName());
+		System.out.println(veggiePizza);
+	}
+}
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/FactoryMethodPseudocodeRG
+:FactoryMethodPseudocodeRG rdf:type owl:NamedIndividual ,
+                                    :SourceCode ;
+						   rdfs:label "Factory Method Pseudocode"@en ;
+                           :programcode """
+// The creator class declares the factory method that must
+// return an object of a product class. The creator's subclasses
+// usually provide the implementation of this method.
+
+class Dialog is
+    // The creator may also provide some default implementation
+    // of the factory method.
+    abstract method createButton():Button
+
+    // Note that, despite its name, the creator's primary
+    // responsibility isn't creating products. It usually
+    // contains some core business logic that relies on product
+    // objects returned by the factory method. Subclasses can
+    // indirectly change that business logic by overriding the
+    // factory method and returning a different type of product
+    // from it.
+    method render() is
+        // Call the factory method to create a product object.
+        Button okButton = createButton()
+        // Now use the product.
+        okButton.onClick(closeDialog)
+        okButton.render()
+
+
+// Concrete creators override the factory method to change the
+// resulting product's type.
+
+class WindowsDialog extends Dialog is
+    method createButton():Button is
+        return new WindowsButton()
+
+class WebDialog extends Dialog is
+    method createButton():Button is
+        return new HTMLButton()
+
+
+// The product interface declares the operations that all
+// concrete products must implement.
+
+interface Button is
+    method render()
+    method onClick(f)
+
+// Concrete products provide various implementations of the
+// product interface.
+
+class WindowsButton implements Button is
+    method render(a, b) is
+        // Render a button in Windows style.
+    method onClick(f) is
+        // Bind a native OS click event.
+
+class HTMLButton implements Button is
+    method render(a, b) is
+        // Return an HTML representation of a button.
+    method onClick(f) is
+        // Bind a web browser click event.
+
+
+class Application is
+    field dialog: Dialog
+
+    // The application picks a creator's type depending on the
+    // current configuration or environment settings.
+    method initialize() is
+        config = readApplicationConfigFile()
+
+        if (config.OS == \"Windows\") then
+            dialog = new WindowsDialog()
+        else if (config.OS == \"Web\") then
+            dialog = new WebDialog()
+        else
+            throw new Exception(\"Error! Unknown operating system.\")
+
+    // The client code works with an instance of a concrete
+    // creator, albeit through its base interface. As long as
+    // the client keeps working with the creator via the base
+    // interface, you can pass it any creator's subclass.
+    method main() is
+        this.initialize()
+        dialog.render() """ ;
+                           rdfs:seeAlso "https://refactoring.guru/design-patterns/factory-method"^^xsd:anyURI .
+
+
+
+:Flyweight :hasSourceCode :FlyweightJavaRG ,
+                          :FlyweightPseudocodeRG .
+						  
+
+
+###  http://www.lavbic.net/onto/FDP/FlyweightJavaRG
+:FlyweightJavaRG rdf:type owl:NamedIndividual ,
+                          :SourceCode ;
+				 rdfs:label "Flyweight Java source code"@en ;
+                 :language "Java" ;
+                 :programcode """
+import java.util.Map;
+import java.util.HashMap;
+
+
+/** 
+ * [Flyweight]
+ *
+ * Flyweight interface, which takes in extrinsic state and performs an operation
+ * - takes in \"extrinsic state\" and performs an operation
+ */
+ 
+interface FlyweightExtrinsic {
+	// operation, extrinsic state
+	String getName();
+}
+
+/**
+ * [Flyweights]
+ *
+ * posamezni primerki razreda Tenant bodo objekti [Flyweight].
+ * - implements interface [Flyweight] and stores \"intrinsic\" state
+ */
+
+class Tenant implements FlyweightExtrinsic {
+	
+	private String name;
+	
+	public Tenant() {
+		this(\"\");
+	}
+	
+	public Tenant(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+}
+
+/** 
+ * [FlyweightFactory]
+ * 
+ * - Registry acts as a [Factory] and cache for Tenant flyweight objects.
+ * - Flyweights are stored in a Factory's repository
+ * - creates and shares [Flyweight] objects
+ */
+
+class Registry {
+	
+	private Map<String, Tenant> tenants;
+	
+	public Registry() {
+		this.tenants = new HashMap<>();
+	}
+	
+	public Tenant findByName(String name) {
+		if (!tenants.containsKey(name)) {
+			this.tenants.put(name, new Tenant(name));
+		}
+		return tenants.get(name);
+	}
+}
+
+/**
+ * [Client]
+ *
+ * Razred, ki uporablja vzorec flyweight.  
+ * Apartment maps a unique tenant to their room number.
+ */
+
+class Apartment {
+	
+	private Map<Integer, Tenant> occupants;
+	private Registry registry;
+	
+	public Apartment() {
+		this.occupants = new HashMap<>();
+		this.registry = new Registry();
+	}
+	
+	public void addOccupant(String name, int room) {
+		Tenant tenant = this.registry.findByName(name);
+		this.occupants.put(room, tenant);
+	}
+	
+	public void tenants() {
+		for (Integer room: occupants.keySet()) {
+			// calls FlyweightFactory.getFlyweight(key) and gets a [Flighweight object]
+			Tenant tenant = occupants.get(room);
+			// [Flighweight object].operation(extrinsicState)
+			// - tenant.getName()
+			System.out.printf(\"%s je v sobi %d%n\", tenant.getName(), room);
+		}
+	}
+}
+
+/** Testni razred za vzorec Flyweight */ 
+
+public class TestFlyweight {
+	
+	public static void main(String[] args) {
+		Apartment apartment = new Apartment();
+		
+		apartment.addOccupant(\"David\", 1);
+		apartment.addOccupant(\"Sarah\", 3);
+		apartment.addOccupant(\"George\", 2);
+		apartment.addOccupant(\"Lisa\", 12);
+		apartment.addOccupant(\"Michael\", 10);
+		
+		apartment.tenants();
+	}
+}
+""" ;
+                       rdfs:seeAlso "https://refactoring.guru/design-patterns/flyweight"^^xsd:anyURI .
+
+
+###  http://www.lavbic.net/onto/FDP/FlyweightPseudocodeRG
+:FlyweightPseudocodeRG rdf:type owl:NamedIndividual ,
+                                :SourceCode ;
+					   rdfs:label "Flyweight Pseudocode"@en ;
+                       :programcode """// The flyweight class contains a portion of the state of a
+// tree. These fields store values that are unique for each
+// particular tree. For instance, you won't find here the tree
+// coordinates. But the texture and colors shared between many
+// trees are here. Since this data is usually BIG, you'd waste a
+// lot of memory by keeping it in each tree object. Instead, we
+// can extract texture, color and other repeating data into a
+// separate object which lots of individual tree objects can
+// reference.
+
+class TreeType is
+    field name
+    field color
+    field texture
+    constructor TreeType(name, color, texture) { ... }
+    method draw(canvas, x, y) is
+        // 1. Create a bitmap of a given type, color & texture.
+        // 2. Draw the bitmap on the canvas at X and Y coords.
+
+// Flyweight factory decides whether to re-use existing
+// flyweight or to create a new object.
+class TreeFactory is
+    static field treeTypes: collection of tree types
+    static method getTreeType(name, color, texture) is
+        type = treeTypes.find(name, color, texture)
+        if (type == null)
+            type = new TreeType(name, color, texture)
+            treeTypes.add(type)
+        return type
+
+// The contextual object contains the extrinsic part of the tree
+// state. An application can create billions of these since they
+// are pretty small: just two integer coordinates and one
+// reference field.
+
+class Tree is
+    field x,y
+    field type: TreeType
+    constructor Tree(x, y, type) { ... }
+    method draw(canvas) is
+        type.draw(canvas, this.x, this.y)
+
+// The Tree and the Forest classes are the flyweight's clients.
+// You can merge them if you don't plan to develop the Tree
+// class any further.
+
+class Forest is
+    field trees: collection of Trees
+
+    method plantTree(x, y, name, color, texture) is
+        type = TreeFactory.getTreeType(name, color, texture)
+        tree = new Tree(x, y, type)
+        trees.add(tree)
+
+    method draw(canvas) is
+        foreach (tree in trees) do
+            tree.draw(canvas) """ ;
+                       rdfs:seeAlso "https://refactoring.guru/design-patterns/flyweight"^^xsd:anyURI .
+
+
+
+
+:Iterator :hasSourceCode :IteratorJavaRG ,
+                         :IteratorPseudocodeRG .
+						 
+
+###  http://www.lavbic.net/onto/FDP/IteratorJavaRG
+:IteratorJavaRG rdf:type owl:NamedIndividual ,
+                         :SourceCode ;
+				rdfs:label "Iterator Java source code"@en ;
+                :language "Java" ;
+                :programcode """
+				
+/* Iterator - Java Code Example */
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+
+/**
+ * [ProfileIterator] Defines profile interface
+ */
+
+interface ProfileIterator {
+    boolean hasNext();
+
+    Profile getNext();
+
+    void reset();
+}
+
+/**
+ * [FacebookIterator] Implements iteration over Facebook profiles
+ */
+
+class FacebookIterator implements ProfileIterator {
+    private Facebook facebook;
+    private String type;
+    private String email;
+    private int currentPosition = 0;
+    private List<String> emails = new ArrayList<>();
+    private List<Profile> profiles = new ArrayList<>();
+
+    public FacebookIterator(Facebook facebook, String type, String email) {
+        this.facebook = facebook;
+        this.type = type;
+        this.email = email;
+    }
+
+    private void lazyLoad() {
+        if (emails.size() == 0) {
+            List<String> profiles = facebook.requestProfileFriendsFromFacebook(this.email, this.type);
+            for (String profile : profiles) {
+                this.emails.add(profile);
+                this.profiles.add(null);
+            }
+        }
+    }
+
+    @Override
+    public boolean hasNext() {
+        lazyLoad();
+        return currentPosition < emails.size();
+    }
+
+    @Override
+    public Profile getNext() {
+        if (!hasNext()) {
+            return null;
+        }
+
+        String friendEmail = emails.get(currentPosition);
+        Profile friendProfile = profiles.get(currentPosition);
+        if (friendProfile == null) {
+            friendProfile = facebook.requestProfileFromFacebook(friendEmail);
+            profiles.set(currentPosition, friendProfile);
+        }
+        currentPosition++;
+        return friendProfile;
+    }
+
+    @Override
+    public void reset() {
+        currentPosition = 0;
+    }
+}
+
+
+/**
+ * [LinkedInIterator.java] Implements iteration over LinkedIn profiles
+ */
+
+class LinkedInIterator implements ProfileIterator {
+    private LinkedIn linkedIn;
+    private String type;
+    private String email;
+    private int currentPosition = 0;
+    private List<String> emails = new ArrayList<>();
+    private List<Profile> contacts = new ArrayList<>();
+
+    public LinkedInIterator(LinkedIn linkedIn, String type, String email) {
+        this.linkedIn = linkedIn;
+        this.type = type;
+        this.email = email;
+    }
+
+    private void lazyLoad() {
+        if (emails.size() == 0) {
+            List<String> profiles = linkedIn.requestRelatedContactsFromLinkedInAPI(this.email, this.type);
+            for (String profile : profiles) {
+                this.emails.add(profile);
+                this.contacts.add(null);
+            }
+        }
+    }
+
+    @Override
+    public boolean hasNext() {
+        lazyLoad();
+        return currentPosition < emails.size();
+    }
+
+    @Override
+    public Profile getNext() {
+        if (!hasNext()) {
+            return null;
+        }
+
+        String friendEmail = emails.get(currentPosition);
+        Profile friendContact = contacts.get(currentPosition);
+        if (friendContact == null) {
+            friendContact = linkedIn.requestContactInfoFromLinkedInAPI(friendEmail);
+            contacts.set(currentPosition, friendContact);
+        }
+        currentPosition++;
+        return friendContact;
+    }
+
+    @Override
+    public void reset() {
+        currentPosition = 0;
+    }
+}
+
+
+/* [social_networks] */
+
+
+/**
+ * [SocialNetwork.java] Defines common social network interface
+ */
+
+interface SocialNetwork {
+    ProfileIterator createFriendsIterator(String profileEmail);
+
+    ProfileIterator createCoworkersIterator(String profileEmail);
+}
+
+/**
+ * [Facebook] social network class
+ */
+
+class Facebook implements SocialNetwork {
+    private List<Profile> profiles;
+
+    public Facebook(List<Profile> cache) {
+        if (cache != null) {
+            this.profiles = cache;
+        } else {
+            this.profiles = new ArrayList<>();
+        }
+    }
+
+    public Profile requestProfileFromFacebook(String profileEmail) {
+        // Here would be a POST request to one of the Facebook API endpoints.
+        // Instead, we emulates long network connection, which you would expect
+        // in the real life...
+        simulateNetworkLatency();
+        System.out.println("Facebook: Loading profile '" + profileEmail + "' over the network...");
+
+        // ...and return test data.
+        return findProfile(profileEmail);
+    }
+
+    public List<String> requestProfileFriendsFromFacebook(String profileEmail, String contactType) {
+        // Here would be a POST request to one of the Facebook API endpoints.
+        // Instead, we emulates long network connection, which you would expect
+        // in the real life...
+        simulateNetworkLatency();
+        System.out.println("Facebook: Loading '" + contactType + "' list of '" + profileEmail + "' over the network...");
+
+        // ...and return test data.
+        Profile profile = findProfile(profileEmail);
+        if (profile != null) {
+            return profile.getContacts(contactType);
+        }
+        return null;
+    }
+
+    private Profile findProfile(String profileEmail) {
+        for (Profile profile : profiles) {
+            if (profile.getEmail().equals(profileEmail)) {
+                return profile;
+            }
+        }
+        return null;
+    }
+
+    private void simulateNetworkLatency() {
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public ProfileIterator createFriendsIterator(String profileEmail) {
+        return new FacebookIterator(this, "friends", profileEmail);
+    }
+
+    @Override
+    public ProfileIterator createCoworkersIterator(String profileEmail) {
+        return new FacebookIterator(this, "coworkers", profileEmail);
+    }
+}
+
+/**
+ * [LinkedIn] social network
+ */
+
+class LinkedIn implements SocialNetwork {
+    private List<Profile> contacts;
+
+    public LinkedIn(List<Profile> cache) {
+        if (cache != null) {
+            this.contacts = cache;
+        } else {
+            this.contacts = new ArrayList<>();
+        }
+    }
+
+    public Profile requestContactInfoFromLinkedInAPI(String profileEmail) {
+        // Here would be a POST request to one of the LinkedIn API endpoints.
+        // Instead, we emulates long network connection, which you would expect
+        // in the real life...
+        simulateNetworkLatency();
+        System.out.println("LinkedIn: Loading profile '" + profileEmail + "' over the network...");
+
+        // ...and return test data.
+        return findContact(profileEmail);
+    }
+
+    public List<String> requestRelatedContactsFromLinkedInAPI(String profileEmail, String contactType) {
+        // Here would be a POST request to one of the LinkedIn API endpoints.
+        // Instead, we emulates long network connection, which you would expect
+        // in the real life.
+        simulateNetworkLatency();
+        System.out.println("LinkedIn: Loading '" + contactType + "' list of '" + profileEmail + "' over the network...");
+
+        // ...and return test data.
+        Profile profile = findContact(profileEmail);
+        if (profile != null) {
+            return profile.getContacts(contactType);
+        }
+        return null;
+    }
+
+    private Profile findContact(String profileEmail) {
+        for (Profile profile : contacts) {
+            if (profile.getEmail().equals(profileEmail)) {
+                return profile;
+            }
+        }
+        return null;
+    }
+
+    private void simulateNetworkLatency() {
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public ProfileIterator createFriendsIterator(String profileEmail) {
+        return new LinkedInIterator(this, "friends", profileEmail);
+    }
+
+    @Override
+    public ProfileIterator createCoworkersIterator(String profileEmail) {
+        return new LinkedInIterator(this, "coworkers", profileEmail);
+    }
+}
+
+
+/* [Profile] */
+
+
+/**
+ * [Profile.java] Social profiles
+ */
+
+class Profile {
+    private String name;
+    private String email;
+    private Map<String, List<String>> contacts = new HashMap<>();
+
+    public Profile(String email, String name, String... contacts) {
+        this.email = email;
+        this.name = name;
+
+        // Parse contact list from a set of "friend:email@gmail.com" pairs.
+        for (String contact : contacts) {
+            String[] parts = contact.split(":");
+            String contactType = "friend", contactEmail;
+            if (parts.length == 1) {
+                contactEmail = parts[0];
+            }
+            else {
+                contactType = parts[0];
+                contactEmail = parts[1];
+            }
+            if (!this.contacts.containsKey(contactType)) {
+                this.contacts.put(contactType, new ArrayList<>());
+            }
+            this.contacts.get(contactType).add(contactEmail);
+        }
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<String> getContacts(String contactType) {
+        if (!this.contacts.containsKey(contactType)) {
+            this.contacts.put(contactType, new ArrayList<>());
+        }
+        return contacts.get(contactType);
+    }
+}
+
+/* Spammer */
+
+/**
+ * [SocialSpammer] Message sending application
+ */
+
+class SocialSpammer {
+    public SocialNetwork network;
+    public ProfileIterator iterator;
+
+    public SocialSpammer(SocialNetwork network) {
+        this.network = network;
+    }
+
+    public void sendSpamToFriends(String profileEmail, String message) {
+        System.out.println("\nIterating over friends...\n");
+        iterator = network.createFriendsIterator(profileEmail);
+        while (iterator.hasNext()) {
+            Profile profile = iterator.getNext();
+            sendMessage(profile.getEmail(), message);
+        }
+    }
+
+    public void sendSpamToCoworkers(String profileEmail, String message) {
+        System.out.println("\nIterating over coworkers...\n");
+        iterator = network.createCoworkersIterator(profileEmail);
+        while (iterator.hasNext()) {
+            Profile profile = iterator.getNext();
+            sendMessage(profile.getEmail(), message);
+        }
+    }
+
+    public void sendMessage(String email, String message) {
+        System.out.println("Sent message to: '" + email + "'. Message body: '" + message + "'");
+    }
+}
+
+
+/** Iteartor pattern Client */
+
+/**
+ * Demo class. Everything comes together here.
+ */
+
+public class Demo {
+
+    public static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        System.out.println("Please specify social network to target spam tool (default:Facebook):");
+        System.out.println("1. Facebook");
+        System.out.println("2. LinkedIn");
+        String choice = scanner.nextLine();
+
+        SocialNetwork network;
+        if (choice.equals("2")) {
+            network = new LinkedIn(createTestProfiles());
+        }
+        else {
+            network = new Facebook(createTestProfiles());
+        }
+
+        SocialSpammer spammer = new SocialSpammer(network);
+        spammer.sendSpamToFriends("anna.smith@bing.com",
+                "Hey! This is Anna's friend Josh. Can you do me a favor and like this post [link]?");
+        spammer.sendSpamToCoworkers("anna.smith@bing.com",
+                "Hey! This is Anna's boss Jason. Anna told me you would be interested in [link].");
+    }
+
+    public static List<Profile> createTestProfiles() {
+        List<Profile> data = new ArrayList<Profile>();
+        data.add(new Profile("anna.smith@bing.com", "Anna Smith", "friends:mad_max@ya.com", "friends:catwoman@yahoo.com", "coworkers:sam@amazon.com"));
+        data.add(new Profile("mad_max@ya.com", "Maximilian", "friends:anna.smith@bing.com", "coworkers:sam@amazon.com"));
+        data.add(new Profile("bill@microsoft.eu", "Billie", "coworkers:avanger@ukr.net"));
+        data.add(new Profile("avanger@ukr.net", "John Day", "coworkers:bill@microsoft.eu"));
+        data.add(new Profile("sam@amazon.com", "Sam Kitting", "coworkers:anna.smith@bing.com", "coworkers:mad_max@ya.com", "friends:catwoman@yahoo.com"));
+        data.add(new Profile("catwoman@yahoo.com", "Liza", "friends:anna.smith@bing.com", "friends:sam@amazon.com"));
+        return data;
+    }
+}
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/IteratorPseudocodeRG
+:IteratorPseudocodeRG rdf:type owl:NamedIndividual ,
+                               :SourceCode ;
+					  rdfs:label "Iterator Pseudocode"@en ;
+                      :programcode """// The collection interface must declare a factory method for
+// producing iterators. You can declare several methods if there
+// are different kinds of iteration available in your program.
+
+interface SocialNetwork is
+    method createFriendsIterator(profileId):ProfileIterator
+    method createCoworkersIterator(profileId):ProfileIterator
+
+
+// Each concrete collection is coupled to a set of concrete
+// iterator classes it returns. But the client isn't, since the
+// signature of these methods returns iterator interfaces.
+
+class Facebook implements SocialNetwork is
+    // ... The bulk of the collection's code should go here ...
+
+    // Iterator creation code.
+    method createFriendsIterator(profileId) is
+        return new FacebookIterator(this, profileId, \"friends\")
+    method createCoworkersIterator(profileId) is
+        return new FacebookIterator(this, profileId, \"coworkers\")
+
+
+// The common interface for all iterators.
+
+interface ProfileIterator is
+    method getNext():Profile
+    method hasMore():bool
+
+
+// The concrete iterator class.
+
+class FacebookIterator implements ProfileIterator is
+    // The iterator needs a reference to the collection that it
+    // traverses.
+    private field facebook: Facebook
+    private field profileId, type: string
+
+    // An iterator object traverses the collection independently
+    // from other iterators. Therefore it has to store the
+    // iteration state.
+    private field currentPosition
+    private field cache: array of Profile
+
+    constructor FacebookIterator(facebook, profileId, type) is
+        this.facebook = facebook
+        this.profileId = profileId
+        this.type = type
+
+    private method lazyInit() is
+        if (cache == null)
+            cache = facebook.socialGraphRequest(profileId, type)
+
+    // Each concrete iterator class has its own implementation
+    // of the common iterator interface.
+    method getNext() is
+        if (hasMore())
+            result = cache[currentPosition]
+            currentPosition++
+            return result
+
+    method hasMore() is
+        lazyInit()
+        return currentPosition < cache.length
+
+
+// Here is another useful trick: you can pass an iterator to a
+// client class instead of giving it access to a whole
+// collection. This way, you don't expose the collection to the
+// client.
+//
+// And there's another benefit: you can change the way the
+// client works with the collection at runtime by passing it a
+// different iterator. This is possible because the client code
+// isn't coupled to concrete iterator classes.
+
+class SocialSpammer is
+    method send(iterator: ProfileIterator, message: string) is
+        while (iterator.hasMore())
+            profile = iterator.getNext()
+            System.sendEmail(profile.getEmail(), message)
+
+
+// The application class configures collections and iterators
+// and then passes them to the client code.
+
+class Application is
+    field network: SocialNetwork
+    field spammer: SocialSpammer
+
+    method config() is
+        if working with Facebook
+            this.network = new Facebook()
+        if working with LinkedIn
+            this.network = new LinkedIn()
+        this.spammer = new SocialSpammer()
+
+    method sendSpamToFriends(profile) is
+        iterator = network.createFriendsIterator(profile.getId())
+        spammer.send(iterator, \"Very important message\")
+
+    method sendSpamToCoworkers(profile) is
+        iterator = network.createCoworkersIterator(profile.getId())
+        spammer.send(iterator, \"Very important message\") """ ;
+                      rdfs:seeAlso "https://refactoring.guru/design-patterns/iterator"^^xsd:anyURI .
+
+
+
+
+:Mediator :hasSourceCode :MediatorJavaRG ,
+                         :MediatorPseudocodeRG .
+
+
+###  http://www.lavbic.net/onto/FDP/MediatorJavaRG
+:MediatorJavaRG rdf:type owl:NamedIndividual ,
+                         :SourceCode ;
+				rdfs:label "Mediator Java source code"@en ;
+                :language "Java" ;
+                :programcode """
+import java.util.ArrayList;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+
+
+/**
+ * [Common component] interface.
+ */
+
+interface Component {
+	void setMediator(Mediator mediator);
+	String getName();
+}
+
+/**
+ * [Concrete Components]
+ *
+ * Concrete Components implement various functionality. They don't depend on
+ * other components. They also don't depend on any concrete mediator classes.
+ *
+ * Concrete components don't talk with each other. They have only one
+ * communication channel –> sending requests to the mediator.
+ */
+
+class AddButton extends JButton implements Component {
+	
+	private Mediator mediator;
+	
+	public AddButton() {
+		super(\"Add\");
+	}
+	
+	// Notifies all listeners that have registered interest for notification 
+	// on this event type. The event instance is lazily created using the 
+	// event parameter.
+
+	@Override
+	protected void fireActionPerformed(ActionEvent actionEvent) {
+		this.mediator.addNewNote(new Note());
+	}	
+	
+	@Override
+	public void setMediator(Mediator mediator) {
+		this.mediator = mediator;
+	}
+	
+	@Override
+	public String getName() {
+		return \"AddButton\";
+	}
+}
+
+class DeleteButton extends JButton implements Component {
+	
+	private Mediator mediator;
+
+	public DeleteButton() {
+		super(\"Del\");
+	}
+	
+	// Notifies all listeners that have registered interest for notification 
+	// on this event type. The event instance is lazily created using the 
+	// event parameter.	
+	
+	@Override
+	protected void fireActionPerformed(ActionEvent actionEvent) {
+		this.mediator.deleteNote();
+	}	
+
+	@Override
+	public void setMediator(Mediator mediator) {
+		this.mediator = mediator;
+	}
+
+	@Override
+	public String getName() {
+		return \"DelButton\";
+	}
+}
+
+class Filter extends JTextField implements Component {
+	
+	private Mediator mediator;
+	private ListModel listModel;
+	
+	public Filter() {}
+	
+	// ListModel - interface defines the methods components like JList use to get 
+	//             the value of each cell in a list and the length of the list.
+	
+	public void setList(ListModel listModel) {
+		this.listModel = listModel;
+	}	
+	
+	// Processes any key events that the component itself recognizes. This method 
+	// is called only if the event has not yet been consumed. Prior kbd UI logic.
+	
+	@Override
+	protected void processComponentKeyEvent(KeyEvent keyEvent) {
+		String start = getText();
+		this.searchElements(start);
+	}
+	
+	@Override
+	public void setMediator(Mediator mediator) {
+		this.mediator = mediator;
+	}
+	
+	@Override
+	public String getName() {
+		return \"Filter\";
+	}
+	
+	private void searchElements(String s) {
+		if (this.listModel == null)
+			return;
+
+		if (s.equals(\"\")) {
+			this.mediator.setElementsList(this.listModel);
+			return;
+		}
+
+		ArrayList<Note> notes = new ArrayList<>();
+		for (int i = 0; i < listModel.getSize(); i++) {
+			notes.add((Note) listModel.getElementAt(i));
+		}
+		// DefaultListModel — everything is pretty much taken care of for us. 
+		DefaultListModel<Note> listModel = new DefaultListModel<>();
+		for (Note note : notes) {
+			if (note.getName().contains(s))
+				listModel.addElement(note);
+		}
+		this.mediator.setElementsList(listModel);
+	}	
+}
+
+
+@SuppressWarnings(\"unchecked\")
+class List extends JList implements Component {
+	
+	private Mediator mediator;
+	private final DefaultListModel LIST_MODEL;
+	
+	public List(DefaultListModel listModel) {
+		super(listModel);
+		this.LIST_MODEL = listModel;
+		setModel(listModel);
+		this.setLayoutOrientation(JList.VERTICAL);
+		Thread thread = new Thread(new HidePerformer(this));
+		thread.start();
+	}
+	
+	public void addElement(Note note) {
+		this.LIST_MODEL.addElement(note);
+		int index = LIST_MODEL.size() - 1;
+		setSelectedIndex(index);
+		ensureIndexIsVisible(index);
+		this.mediator.sendToFilter(this.LIST_MODEL);
+	}
+
+	public void deleteElement() {
+		int index = this.getSelectedIndex();
+		try {
+			this.LIST_MODEL.remove(index);
+			this.mediator.sendToFilter(this.LIST_MODEL);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.printf(\"[Napaka]: %s%n\", e);
+		}
+	}
+
+	public Note getCurrentElement() {
+		return (Note) getSelectedValue();
+	}
+	
+	// define interface Component methods
+	
+	@Override
+	public void setMediator(Mediator mediator) {
+		this.mediator = mediator;
+	}
+
+	@Override
+	public String getName() {
+		return \"List\";
+	}
+	
+	/**
+	 * Thread [HidePerformer]
+	 */
+	 
+	private class HidePerformer implements Runnable {
+		private List list;
+
+		public HidePerformer(List list) {
+			this.list = list;
+		}
+
+		@Override
+		public void run() {
+			while (true) {
+				try {
+					Thread.sleep(300);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				// HidePerformer.this
+				if (this.list.isSelectionEmpty())
+					List.this.mediator.hideElements(true);
+				else
+					List.this.mediator.hideElements(false);
+			}
+		}
+	}	 
+}
+
+
+class SaveButton extends JButton implements Component {
+
+	private Mediator mediator;
+
+	public SaveButton() {
+		super(\"Save\");
+	}
+
+	// Notifies all listeners that have registered interest for notification 
+	// on this event type. The event instance is lazily created using the 
+	// event parameter.	
+	
+	@Override
+	protected void fireActionPerformed(ActionEvent actionEvent) {
+		this.mediator.saveChanges();
+	}	
+
+	@Override
+	public void setMediator(Mediator mediator) {
+		this.mediator = mediator;
+	}
+	
+	@Override
+	public String getName() {
+		return \"SaveButton\";
+	}
+}
+
+class TextBox extends JTextArea implements Component {
+
+	private Mediator mediator;
+
+	// processComponentKeyEvent() -> processes any key events that the 
+	// component itself recognizes. This method is called only if the event 
+	// has not yet been consumed. Prior keyboard UI logic.
+
+	@Override
+	protected void processComponentKeyEvent(KeyEvent keyEvent) {
+		this.mediator.markNote();
+	}
+
+	@Override
+	public void setMediator(Mediator mediator) {
+		this.mediator = mediator;
+	}
+
+	@Override
+	public String getName() {
+		return \"TextBox\";
+	}
+}
+
+class Title extends JTextField implements Component {
+
+	private Mediator mediator;
+	
+	// processComponentKeyEvent() -> processes any key events that the 
+	// component itself recognizes. This method is called only if the event 
+	// has not yet been consumed. Prior keyboard UI logic.	
+
+	@Override
+	protected void processComponentKeyEvent(KeyEvent keyEvent) {
+		this.mediator.markNote();
+	}
+
+	@Override
+	public void setMediator(Mediator mediator) {
+		this.mediator = mediator;
+	}
+
+	@Override
+	public String getName() {
+		return \"Title\";
+	}
+}
+
+
+/**
+ * [Mediator]
+ *
+ * [Common mediator interface]. The Mediator interface declares methods of 
+ * communication with components, which usually include just a single notification 
+ * method. Components may pass any context as arguments of this method, including 
+ * their own objects, but only in such a way that no coupling occurs between a 
+ * receiving component and the sender’s class.
+ */
+
+interface Mediator {
+	
+	void addNewNote(Note note);
+	void deleteNote();
+	void getInfoFromList(Note note);
+	void saveChanges();
+	void markNote();
+	void clear();
+	void sendToFilter(ListModel listModel);
+	void setElementsList(ListModel list);
+	void hideElements(boolean flag);
+	
+	void registerComponent(Component component);
+	void createGUI();
+	
+}
+
+/**
+ * [ConcreteMediator]
+ *
+ * Concrete Mediators encapsulate relations between various components. Concrete 
+ * mediators often keep references to all components they manage and sometimes even 
+ * manage their lifecycle.
+ *
+ * [Concrete mediator]. All chaotic communications between concrete components have 
+ * been extracted to the mediator. Now components only talk with the mediator, which 
+ * knows who has to handle a request.
+ */
+
+class Editor implements Mediator {
+
+	private Title title;
+	private TextBox textBox;
+	private AddButton add;
+	private DeleteButton del;
+	private SaveButton save;
+	private List list;
+	private Filter filter;
+
+	private JLabel titleLabel;
+	private JLabel textLabel;
+	private JLabel label;	
+
+	public Editor() {
+		this.titleLabel = new JLabel(\"Title:\");
+		this.textLabel = new JLabel(\"Text:\");
+		this.label = new JLabel(\"Add or select existing note to proceed...\");
+	}
+	
+	/**
+	 * Various methods to handle requests from particular components.
+	 */
+	 
+	@Override
+	public void addNewNote(Note note) {
+		this.title.setText(\"\");
+		this.textBox.setText(\"\");
+		this.list.addElement(note);
+	}
+
+	@Override
+	public void deleteNote() {
+		this.list.deleteElement();
+	}
+
+	@Override
+	public void getInfoFromList(Note note) {
+		this.title.setText(note.getName().replace('*', ' '));
+		this.textBox.setText(note.getText());
+	}
+
+	@Override
+	public void saveChanges() {
+		try {
+			Note note = (Note) list.getSelectedValue();
+			note.setName(this.title.getText());
+			note.setText(this.textBox.getText());
+			this.list.repaint();
+		} catch (NullPointerException ignored) {}
+	}
+
+	@Override
+	public void markNote() {
+		try {
+			Note note = this.list.getCurrentElement();
+			String name = note.getName();
+			if (!name.endsWith(\"*\"))
+				note.setName(note.getName() + \"*\");
+			this.list.repaint();
+		} catch (NullPointerException ignored) {}
+	}
+
+	@Override
+	public void clear() {
+		this.title.setText(\"\");
+		this.textBox.setText(\"\");
+	}	
+	
+	@Override
+	public void sendToFilter(ListModel listModel) {
+		this.filter.setList(listModel);
+	}
+
+	@SuppressWarnings(\"unchecked\")
+	@Override
+	public void setElementsList(ListModel list) {
+		this.list.setModel(list);
+		this.list.repaint();
+	}
+	
+	@Override
+	public void hideElements(boolean flag) {
+		this.titleLabel.setVisible(!flag);
+		this.textLabel.setVisible(!flag);
+		this.title.setVisible(!flag);
+		this.textBox.setVisible(!flag);
+		this.save.setVisible(!flag);
+		this.label.setVisible(flag);
+	}	
+	
+	/**
+	 * Here the registration of components by the mediator.
+	 */
+
+	@Override
+	public void registerComponent(Component component) {
+		component.setMediator(this);
+		switch (component.getName()) {
+			case \"AddButton\":
+				this.add = (AddButton) component;
+				break;
+			case \"DelButton\":
+				this.del = (DeleteButton) component;
+				break;
+			case \"Filter\":
+				this.filter = (Filter)component;
+				break;
+			case \"List\":
+				this.list = (List) component;
+				this.list.addListSelectionListener(listSelectionEvent -> {
+					Note note = (Note) this.list.getSelectedValue();
+					if (note != null)
+						getInfoFromList(note);
+					else
+						clear();
+				});
+				break;
+			case \"SaveButton\":
+				this.save = (SaveButton) component;
+				break;
+			case \"TextBox\":
+				this.textBox = (TextBox) component;
+				break;
+			case \"Title\":
+				this.title = (Title) component;
+				break;
+		}
+	}
+	
+	/**
+	 * Create JFrame and JPanel - nasty solution to combine GUI and Mediator ->
+	 * Code for creating JFrame should be removed from Mediator class.
+	 */
+	
+	@Override
+	public void createGUI() {
+		JFrame notes = new JFrame(\"Notes\");
+		notes.setSize(960, 600);
+		notes.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		
+		JPanel left = new JPanel();
+		left.setBorder(new LineBorder(Color.BLACK));
+		left.setSize(320, 600);
+		left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
+		
+		JPanel filterPanel = new JPanel();
+		filterPanel.add(new JLabel(\"Filter:\"));
+		filter.setColumns(20);
+		filterPanel.add(filter);
+		filterPanel.setPreferredSize(new Dimension(280, 40));
+		
+		JPanel listPanel = new JPanel();
+		list.setFixedCellWidth(260);
+		listPanel.setSize(320, 470);
+		JScrollPane scrollPane = new JScrollPane(list);
+		scrollPane.setPreferredSize(new Dimension(275, 410));
+		listPanel.add(scrollPane);
+		
+		JPanel buttonPanel = new JPanel();
+		add.setPreferredSize(new Dimension(85, 25));
+		buttonPanel.add(add);
+		del.setPreferredSize(new Dimension(85, 25));
+		buttonPanel.add(del);
+		buttonPanel.setLayout(new FlowLayout());
+		left.add(filterPanel);
+		left.add(listPanel);
+		left.add(buttonPanel);
+		
+		JPanel right = new JPanel();
+		right.setLayout(null);
+		right.setSize(640, 600);
+		right.setLocation(320, 0);
+		right.setBorder(new LineBorder(Color.BLACK));
+		titleLabel.setBounds(20, 4, 50, 20);
+		title.setBounds(60, 5, 555, 20);
+		textLabel.setBounds(20, 4, 50, 130);
+		textBox.setBorder(new LineBorder(Color.DARK_GRAY));
+		textBox.setBounds(20, 80, 595, 410);
+		save.setBounds(270, 535, 80, 25);
+		label.setFont(new Font(\"Verdana\", Font.PLAIN, 22));
+		label.setBounds(100, 240, 500, 100);
+		right.add(label);
+		right.add(titleLabel);
+		right.add(title);
+		right.add(textLabel);
+		right.add(textBox);
+		right.add(save);
+		notes.setLayout(null);
+		notes.getContentPane().add(left);
+		notes.getContentPane().add(right);
+		notes.setResizable(false);
+		notes.setLocationRelativeTo(null);
+		notes.setVisible(true);
+	}
+}
+
+
+/**
+ * Note class.
+ */
+
+class Note {
+	
+	private String name;
+	private String text;
+
+	public Note() {
+		this.name = \"New note\";
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+}
+
+
+/**
+ * Client
+ */
+
+public class MediatorPatternDemo {
+	
+	public static void main(String[] args) {
+		Mediator mediator = new Editor();
+
+		mediator.registerComponent(new Title());
+		mediator.registerComponent(new TextBox());
+		mediator.registerComponent(new AddButton());
+		mediator.registerComponent(new DeleteButton());
+		mediator.registerComponent(new SaveButton());
+		mediator.registerComponent(new List(new DefaultListModel()));
+		mediator.registerComponent(new Filter());
+
+		mediator.createGUI();
+	}
+}
+""" .
+
+
+###  http://www.lavbic.net/onto/FDP/MediatorPseudocodeRG
+:MediatorPseudocodeRG rdf:type owl:NamedIndividual ,
+                               :SourceCode ;
+					  rdfs:label "Mediator Pseudocode"@en ;
+                      :programcode """// The mediator interface declares a method used by components
+// to notify the mediator about various events. The mediator may
+// react to these events and pass the execution to other
+// components.
+
+interface Mediator is
+    method notify(sender: Component, event: string)
+
+
+// The concrete mediator class. The intertwined web of
+// connections between individual components has been untangled
+// and moved into the mediator.
+
+class AuthenticationDialog implements Mediator is
+    private field title: string
+    private field loginOrRegisterChkBx: Checkbox
+    private field loginUsername, loginPassword: Textbox
+    private field registrationUsername, registrationPassword,
+                  registrationEmail: Textbox
+    private field okBtn, cancelBtn: Button
+
+    constructor AuthenticationDialog() is
+        // Create all component objects by passing the current
+        // mediator into their constructors to establish links.
+
+    // When something happens with a component, it notifies the
+    // mediator. Upon receiving a notification, the mediator may
+    // do something on its own or pass the request to another
+    // component.
+    method notify(sender, event) is
+        if (sender == loginOrRegisterChkBx and event == \"check\")
+            if (loginOrRegisterChkBx.checked)
+                title = \"Log in\"
+                // 1. Show login form components.
+                // 2. Hide registration form components.
+            else
+                title = \"Register\"
+                // 1. Show registration form components.
+                // 2. Hide login form components
+
+        if (sender == okBtn && event == \"click\")
+            if (loginOrRegister.checked)
+                // Try to find a user using login credentials.
+                if (!found)
+                    // Show an error message above the login
+                    // field.
+            else
+                // 1. Create a user account using data from the
+                // registration fields.
+                // 2. Log that user in.
+                // ...
+
+
+// Components communicate with a mediator using the mediator
+// interface. Thanks to that, you can use the same components in
+// other contexts by linking them with different mediator
+// objects.
+
+class Component is
+    field dialog: Mediator
+
+    constructor Component(dialog) is
+        this.dialog = dialog
+
+    method click() is
+        dialog.notify(this, \"click\")
+
+    method keypress() is
+        dialog.notify(this, \"keypress\")
+
+// Concrete components don't talk to each other. They have only
+// one communication channel, which is sending notifications to
+// the mediator.
+
+class Button extends Component is
+    // ...
+
+class Textbox extends Component is
+    // ...
+
+class Checkbox extends Component is
+    method check() is
+        dialog.notify(this, \"check\")
+    // ... """ ;
+                      rdfs:seeAlso "https://refactoring.guru/design-patterns/mediator"^^xsd:anyURI .
+
+
+
+
+
+:Memento :hasSourceCode :MementoJavaRG ,
+                        :MementoPseudocodeRG .
+
+
+###  http://www.lavbic.net/onto/FDP/MementoJavaRG
+:MementoJavaRG rdf:type owl:NamedIndividual ,
+                        :SourceCode ;
+			   rdfs:label "Memento Java source code"@en ;
+               :language "Java" ;
+               :programcode """
+/* Memento - Java Code Example */
+
+/**
+ * Memento: implementacija s striktno enkapsulacijo.
+ */
+
+
+import java.util.List;
+import java.util.ArrayList;
+
+
+interface State {
+	 
+ }
+ 
+interface Memento {
+	public void restore();
+}
+
+
+interface Originator {
+	public Memento save();
+	public void setState(State state);
+}
+
+
+class ConcreteOriginator implements Originator {
+	
+	// 1.1 naslov ni del shranjevanja stanja
+	
+	private String naslov;
+	
+	// 1.2 attributes that are part of the saved state
+	
+	private String upravnik;
+	private String barvaFasade;
+	
+	/**
+	 * [Concrete State]
+	 */	
+	public static class ConcreteState implements State {
+		
+		// accessible by outer class only
+		
+		private final String upravnik;
+		private final String barvaFasade;
+		
+		public ConcreteState(String upravnik, String barvaFasade) {
+			this.upravnik = upravnik;
+			this.barvaFasade = barvaFasade;
+		}
+	}
+	
+	public ConcreteOriginator(String naslov, String upravnik, String barvaFasade) {
+		this.naslov = naslov;
+		this.upravnik = upravnik;
+		this.barvaFasade = barvaFasade;
+	}
+	
+	public void setUpravnik(String upravnik) {
+		System.out.printf("[Originator]: changing state; %s --> %s%n", this.upravnik, upravnik);
+		this.upravnik = upravnik;
+	}
+	
+	public Memento save() {
+		System.out.println("[Originator]: save to Memento.");
+		return new ConcreteMemento(this, new ConcreteState(this.upravnik, this.barvaFasade));
+	}
+	
+	public void setState(State state) {
+		ConcreteState cs = (ConcreteState) state;
+		this.upravnik = cs.upravnik;
+		this.barvaFasade = cs.barvaFasade;
+		System.out.printf("[Originator]: after restoring from Memento: %s, %s%n", this.upravnik, this.barvaFasade);
+	}
+	
+	public String toString() {
+		return String.format("%s, %s barve; upravnik: %s", this.naslov, this.barvaFasade, this.upravnik);
+	}
+}
+
+
+class ConcreteMemento implements Memento {
+	
+	private Originator originator;
+	private State state;
+	
+	public ConcreteMemento(Originator originator, State state) {
+		this.originator = originator;
+		this.state = state;
+	}
+	
+	public void restore() {
+		this.originator.setState(state);
+	}
+}
+
+
+public class Caretaker {
+	
+	private List<Memento> history;
+	
+	public Caretaker() {
+		this.history = new ArrayList<>();
+	}
+
+	public void saveHistory(Memento memento) {
+		this.history.add(memento);
+	}
+	
+	public void undo() {
+		if (this.history.isEmpty())
+			return;
+		Memento memento = this.history.get(this.history.size() - 1);
+		memento.restore();
+	}
+	
+	public static void main(String[] args) {
+		Caretaker caretaker = new Caretaker();
+		ConcreteOriginator originator = new ConcreteOriginator("Lepi pot 4", "SPL d.o.o.", "Bela");
+		
+		originator.setUpravnik("PUN");
+		originator.setUpravnik("Prima Plus");
+		caretaker.saveHistory(originator.save());
+		
+		originator.setUpravnik("DOMO");
+		caretaker.saveHistory(originator.save());
+		originator.setUpravnik("Upravnik d.o.o.");
+		
+		caretaker.undo();
+		System.out.println(originator);
+	}
+	
+}
+
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/MementoPseudocodeRG
+:MementoPseudocodeRG rdf:type owl:NamedIndividual ,
+                              :SourceCode ;
+					 rdfs:label "Memento Pseudocode"@en ;
+                     :programcode """// The originator holds some important data that may change over
+// time. It also defines a method for saving its state inside a
+// memento and another method for restoring the state from it.
+
+class Editor is
+    private field text, curX, curY, selectionWidth
+
+    method setText(text) is
+        this.text = text
+
+    method setCursor(x, y) is
+        this.curX = x
+        this.curY = y
+
+    method setSelectionWidth(width) is
+        this.selectionWidth = width
+
+    // Saves the current state inside a memento.
+    method createSnapshot():Snapshot is
+        // Memento is an immutable object; that's why the
+        // originator passes its state to the memento's
+        // constructor parameters.
+        return new Snapshot(this, text, curX, curY, selectionWidth)
+
+// The memento class stores the past state of the editor.
+
+class Snapshot is
+    private field editor: Editor
+    private field text, curX, curY, selectionWidth
+
+    constructor Snapshot(editor, text, curX, curY, selectionWidth) is
+        this.editor = editor
+        this.text = text
+        this.curX = x
+        this.curY = y
+        this.selectionWidth = selectionWidth
+
+    // At some point, a previous state of the editor can be
+    // restored using a memento object.
+    method restore() is
+        editor.setText(text)
+        editor.setCursor(curX, curY)
+        editor.setSelectionWidth(selectionWidth)
+
+// A command object can act as a caretaker. In that case, the
+// command gets a memento just before it changes the
+// originator's state. When undo is requested, it restores the
+// originator's state from a memento.
+
+class Command is
+    private field backup: Snapshot
+
+    method makeBackup() is
+        backup = editor.createSnapshot()
+
+    method undo() is
+        if (backup != null)
+            backup.restore()
+    // ... """ ;
+                     rdfs:seeAlso "https://refactoring.guru/design-patterns/memento"^^xsd:anyURI .
+
+
+
+
+
+:Observer :hasSourceCode :ObserverJavaRG ,
+                         :ObserverPseudocodeRG .
+
+
+
+###  http://www.lavbic.net/onto/FDP/ObserverJavaRG
+:ObserverJavaRG rdf:type owl:NamedIndividual ,
+                         :SourceCode ;
+				rdfs:label "Observer Java source code"@en ;
+                :language "Java" ;
+                :programcode """
+/* Observer - Java Code Example */
+
+/**
+ * It provides a way to react to events happening in other objects without coupling to their classes.
+ * V javi vsi listenerji (EventListener)
+ */
+ 
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.io.File;
+
+
+public class ObserverTest {
+	
+	/**
+	 * EventListener: common observer interface
+	 *
+	 * The Subscriber interface declares the notification interface. In most cases, it  
+	 * consists of a single update method. The method may have several parameters that  
+	 * let the publisher pass some event details along with the update.
+	 */
+	
+	@FunctionalInterface
+	public static interface EventListener {
+		// notification method
+		void update(String eventType, File file);
+	}
+	
+	/**
+	 * Publisher
+	 */	
+	
+	/**
+	 * Event Manager: basic publisher (subject)
+	 * 
+	 * maintains subscription list and nofification methods.
+	 */
+
+	public static class EventManager {
+		
+		// event type -> list<uporabnik/poslusalec> 
+		private Map<String, List<EventListener>> event2listeners = new HashMap<>();
+		
+		public EventManager(String... operations) {
+			// varargs: String... -> caller gets it as an array
+			for (String operation : operations) {
+				this.event2listeners.put(operation, new ArrayList<>());
+			}
+		}
+		
+		public void subscribe(String eventType, EventListener poslusalec) {
+			List<EventListener> poslusalci = event2listeners.get(eventType);
+			poslusalci.add(poslusalec);
+		}
+		
+		public void unsubscribe(String eventType, EventListener poslusalec) {
+			List<EventListener> poslusalci = event2listeners.get(eventType);
+			boolean unsubscribed = poslusalci.remove(poslusalec);
+			if (!unsubscribed) {
+				System.out.printf("[Napaka]: %s.%n", "...");
+			}
+		}
+		
+		/**
+		 * Metoda za obvescanje -> When a new event happens, the publisher goes over the
+		 * subscription list and calls the notification method declared in the subscriber
+		 * interface on each subscriber object.
+		 */
+		
+		public void notify(String eventType, File file) {
+			List<EventListener> poslusalci = event2listeners.get(eventType);
+			for (EventListener poslusalec : poslusalci) {
+				poslusalec.update(eventType, file);
+			}
+		}
+	}
+	
+	/**
+	 * Editor: concrete publisher 
+	 *	 
+	 * The Publisher issues events of interest to other objects. These events occur when the publisher 
+	 * changes its state or executes some behaviors. Publishers contain a subscription infrastructure 
+	 * that lets new subscribers join and current subscribers leave the list.
+	 *
+	 * In this case, publisher doesn’t maintain the subscription list by itself. 
+	 *         It delegates this job to the special helper object 'EventManager'.
+	 */
+	 
+	public static class Editor {
+		
+		private EventManager dogodki;
+		private File file;
+		
+		public Editor() {
+			// podpiramo dogodke vrste "open" in "save"
+			this.dogodki = new EventManager("open", "save");
+		}
+		
+		public EventManager getManager() {
+			return this.dogodki;
+		}
+		
+		// [publisher events]
+		
+		public void openFile(String filePath) {
+			this.file = new File(filePath);
+			// odprli smo datoteko -> obvesti poslusalce
+			dogodki.notify("open", file);
+		}
+		
+		public void saveFile() throws Exception {
+			if (this.file == null) {
+				throw new Exception("[Napaka]: datoteka ne obstaja.");
+			}
+			// datoteka je bila shranjena -> obvesti poslusalce
+			dogodki.notify("save", file);
+		}		
+	}
+	
+	// (subscribers)	
+	
+	/**
+	 * [Concrete Subscribers]
+	 * 
+	 * Concrete Subscribers perform some actions in response to notifications issued by the 
+	 * publisher. All of these classes must implement the same interface so the publisher 
+	 * isn’t coupled to concrete classes.
+	 */
+	
+	public static class EmailNotificationListener implements EventListener {
+		
+		private String email;
+
+		public EmailNotificationListener(String email) {
+			this.email = email;
+		}
+
+		/**
+		 * Usually, subscribers need some contextual information to handle the update  
+		 * correctly. For this reason, publishers often pass some context data as arguments  
+		 * of the notification method. The publisher can pass itself as an argument, letting 
+		 * subscriber fetch any required data directly.
+		 */
+
+		@Override
+		public void update(String eventType, File file) {
+			String message = String.format("receiver %s: file '%s' -> %s.", this.email, file.getName(), eventType);
+			System.out.println(message);
+		}
+	}
+	
+	public static class LogOpenListener implements EventListener {
+		
+		private File log;
+
+		public LogOpenListener(String fileName) {
+			this.log = new File(fileName);
+		}
+
+		@Override
+		public void update(String eventType, File file) {
+			String message = String.format("log %s: file '%s' -> %s.", this.log, file.getName(), eventType);
+			System.out.println(message);
+		}
+	}	
+	
+	/** 
+	 * The Client (ObserverTest) creates publisher and subscriber objects separately and  
+	 * then registers subscribers for publisher updates.
+	 */
+	
+	public static void main(String[] args) {
+		Editor publisher = new Editor();
+		EventManager manager = publisher.getManager();
+		
+		EventListener logListener = new LogOpenListener("./logs/applog.txt")
+		manager.subscribe("open", logListener);
+		EventListener emailListener = new EmailNotificationListener("polz@uni-lj.si");
+		manager.subscribe("save", emailListener);
+		
+		try {
+			publisher.openFile("ObserverPattern.java");
+			publisher.saveFile();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/ObserverPseudocodeRG
+:ObserverPseudocodeRG rdf:type owl:NamedIndividual ,
+                               :SourceCode ;
+					  rdfs:label "Observer Pseudocode"@en ;
+                      :programcode """// The base publisher class includes subscription management
+// code and notification methods.
+
+class EventManager is
+    private field listeners: hash map of event types and listeners
+
+    method subscribe(eventType, listener) is
+        listeners.add(eventType, listener)
+
+    method unsubscribe(eventType, listener) is
+        listeners.remove(eventType, listener)
+
+    method notify(eventType, data) is
+        foreach (listener in listeners.of(eventType)) do
+            listener.update(data)
+
+// The concrete publisher contains real business logic that's
+// interesting for some subscribers. We could derive this class
+// from the base publisher, but that isn't always possible in
+// real life because the concrete publisher might already be a
+// subclass. In this case, you can patch the subscription logic
+// in with composition, as we did here.
+
+class Editor is
+    public field events: EventManager
+    private field file: File
+
+    constructor Editor() is
+        events = new EventManager()
+
+    // Methods of business logic can notify subscribers about
+    // changes.
+    method openFile(path) is
+        this.file = new File(path)
+        events.notify(\"open\", file.name)
+
+    method saveFile() is
+        file.write()
+        events.notify(\"save\", file.name)
+
+    // ...
+
+
+// Here's the subscriber interface. If your programming language
+// supports functional types, you can replace the whole
+// subscriber hierarchy with a set of functions.
+
+interface EventListener is
+    method update(filename)
+
+// Concrete subscribers react to updates issued by the publisher
+// they are attached to.
+
+class LoggingListener implements EventListener is
+    private field log: File
+    private field message: string
+
+    constructor LoggingListener(log_filename, message) is
+        this.log = new File(log_filename)
+        this.message = message
+
+    method update(filename) is
+        log.write(replace('%s',filename,message))
+
+class EmailAlertsListener implements EventListener is
+    private field email: string
+    private field message: string
+
+    constructor EmailAlertsListener(email, message) is
+        this.email = email
+        this.message = message
+
+    method update(filename) is
+        system.email(email, replace('%s',filename,message))
+
+
+// An application can configure publishers and subscribers at runtime.
+
+class Application is
+    method config() is
+        editor = new Editor()
+
+        logger = new LoggingListener(
+            \"/path/to/log.txt\",
+            \"Someone has opened the file: %s\")
+        editor.events.subscribe(\"open\", logger)
+
+        emailAlerts = new EmailAlertsListener(
+            \"admin@example.com\",
+            \"Someone has changed the file: %s\")
+        editor.events.subscribe(\"save\", emailAlerts)
+		""" ;
+                      rdfs:seeAlso "https://refactoring.guru/design-patterns/observer"^^xsd:anyURI .
+
+
+
+
+
+
+:Prototype :hasSourceCode :PrototypeJavaRG ,
+                          :PrototypePseudocodeRG .
+
+
+###  http://www.lavbic.net/onto/FDP/PrototypeJavaRG
+:PrototypeJavaRG rdf:type owl:NamedIndividual ,
+                          :SourceCode ;
+				 rdfs:label "Prototype Java source code"@en ;
+                 :language "Java" ;
+                 :programcode """
+/* Prototype - Java Code Example */
+
+/**
+ * Sample: Copying graphical shapes
+ */
+
+
+import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+ * [Shape] Common shape interface (shape list)
+ */
+
+abstract class Shape {
+
+    public int x;
+    public int y;
+    public String color;
+
+    public Shape() {
+    }
+
+    public Shape(Shape target) {
+        if (target != null) {
+            this.x = target.x;
+            this.y = target.y;
+            this.color = target.color;
+        }
+    }
+
+    public abstract Shape clone();
+
+    @Override
+    public boolean equals(Object object2) {
+        if (!(object2 instanceof Shape)) return false;
+        Shape shape2 = (Shape) object2;
+        return shape2.x == x && shape2.y == y && Objects.equals(shape2.color, color);
+    }
+}
+
+/**
+ * [Circle] Simple shape
+ */
+ 
+class Circle extends Shape {
+
+    public int radius;
+
+    public Circle() {
+    }
+
+    public Circle(Circle target) {
+        super(target);
+        if (target != null) {
+            this.radius = target.radius;
+        }
+    }
+
+    @Override
+    public Shape clone() {
+        return new Circle(this);
+    }
+
+    @Override
+    public boolean equals(Object object2) {
+        if (!(object2 instanceof Circle) || !super.equals(object2)) return false;
+        Circle shape2 = (Circle) object2;
+        return shape2.radius == radius;
+    }
+}
+
+/**
+ * [Rectangle] Another shape
+ */
+ 
+class Rectangle extends Shape {
+
+    public int width;
+    public int height;
+
+    public Rectangle() {
+    }
+
+    public Rectangle(Rectangle target) {
+        super(target);
+        if (target != null) {
+            this.width = target.width;
+            this.height = target.height;
+        }
+    }
+
+    @Override
+    public Shape clone() {
+        return new Rectangle(this);
+    }
+
+    @Override
+    public boolean equals(Object object2) {
+        if (!(object2 instanceof Rectangle) || !super.equals(object2)) return false;
+        Rectangle shape2 = (Rectangle) object2;
+        return shape2.width == width && shape2.height == height;
+    }
+}
+
+/**
+ * [Prototype client] Cloning example
+ */
+
+public class TestPrototype {
+
+    public static void main(String[] args) {
+	
+        List<Shape> shapes = new ArrayList<>();
+        List<Shape> shapesCopy = new ArrayList<>();
+
+        Circle circle = new Circle();
+        circle.x = 10;
+        circle.y = 20;
+        circle.radius = 15;
+        circle.color = "red";
+        shapes.add(circle);
+
+        Circle anotherCircle = (Circle) circle.clone();
+        shapes.add(anotherCircle);
+
+        Rectangle rectangle = new Rectangle();
+        rectangle.width = 10;
+        rectangle.height = 20;
+        rectangle.color = "blue";
+        shapes.add(rectangle);
+
+        cloneAndCompare(shapes, shapesCopy);
+    }
+
+    private static void cloneAndCompare(List<Shape> shapes, List<Shape> shapesCopy) {
+        for (Shape shape : shapes) {
+            shapesCopy.add(shape.clone());
+        }
+
+        for (int i = 0; i < shapes.size(); i++) {
+            if (shapes.get(i) != shapesCopy.get(i)) {
+                System.out.println(i + ": Shapes are different objects (yay!)");
+                if (shapes.get(i).equals(shapesCopy.get(i))) {
+                    System.out.println(i + ": And they are identical (yay!)");
+                } else {
+                    System.out.println(i + ": But they are not identical (booo!)");
+                }
+            } else {
+                System.out.println(i + ": Shape objects are the same (booo!)");
+            }
+        }
+    }
+}
+
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/PrototypePseudocodeRG
+:PrototypePseudocodeRG rdf:type owl:NamedIndividual ,
+                                :SourceCode ;
+					   rdfs:label "Prototype Pseudocode"@en ;
+                       :programcode """// Base prototype.
+abstract class Shape is
+    field X: int
+    field Y: int
+    field color: string
+
+    // A regular constructor.
+    constructor Shape() is
+        // ...
+
+    // The prototype constructor. A fresh object is initialized
+    // with values from the existing object.
+    constructor Shape(source: Shape) is
+        this()
+        this.X = source.X
+        this.Y = source.Y
+        this.color = source.color
+
+    // The clone operation returns one of the Shape subclasses.
+    abstract method clone():Shape
+
+
+// Concrete prototype. The cloning method creates a new object
+// in one go by calling the constructor of the current class and
+// passing the current object as the constructor's argument.
+// Performing all the actual copying in the constructor helps to
+// keep the result consistent: the constructor will not return a
+// result until the new object is fully built; thus, no object
+// can have a reference to a partially-built clone.
+
+class Rectangle extends Shape is
+    field width: int
+    field height: int
+
+    constructor Rectangle(source: Rectangle) is
+        // A parent constructor call is needed to copy private
+        // fields defined in the parent class.
+        super(source)
+        this.width = source.width
+        this.height = source.height
+
+    method clone():Shape is
+        return new Rectangle(this)
+
+
+class Circle extends Shape is
+    field radius: int
+
+    constructor Circle(source: Circle) is
+        super(source)
+        this.radius = source.radius
+
+    method clone():Shape is
+        return new Circle(this)
+
+
+// Somewhere in the client code.
+
+class Application is
+    field shapes: array of Shape
+
+    constructor Application() is
+        Circle circle = new Circle()
+        circle.X = 10
+        circle.Y = 10
+        circle.radius = 20
+        shapes.add(circle)
+
+        Circle anotherCircle = circle.clone()
+        shapes.add(anotherCircle)
+        // The `anotherCircle` variable contains an exact copy
+        // of the `circle` object.
+
+        Rectangle rectangle = new Rectangle()
+        rectangle.width = 10
+        rectangle.height = 20
+        shapes.add(rectangle)
+
+    method businessLogic() is
+        // Prototype rocks because it lets you produce a copy of
+        // an object without knowing anything about its type.
+        Array shapesCopy = new Array of Shapes.
+
+        // For instance, we don't know the exact elements in the
+        // shapes array. All we know is that they are all
+        // shapes. But thanks to polymorphism, when we call the
+        // `clone` method on a shape the program checks its real
+        // class and runs the appropriate clone method defined
+        // in that class. That's why we get proper clones
+        // instead of a set of simple Shape objects.
+        foreach (s in shapes) do
+            shapesCopy.add(s.clone())
+
+        // The `shapesCopy` array contains exact copies of the
+        // `shape` array's children.
+		""" ;
+                       rdfs:seeAlso "https://refactoring.guru/design-patterns/prototype"^^xsd:anyURI .
+
+
+
+:Proxy :hasSourceCode :ProxyJavaRG ,
+                      :ProxyPseudocodeRG .
+
+
+###  http://www.lavbic.net/onto/FDP/ProxyJavaRG
+:ProxyJavaRG rdf:type owl:NamedIndividual ,
+                      :SourceCode ;
+			 rdfs:label "Proxy Java source code"@en ;
+             :language "Java" ;
+             :programcode """
+/* Proxy - Java Code Example */
+
+
+public class ProxyTest {
+	
+	/** pomozni razred voznik */
+	
+	public static class Voznik {
+		
+		public int starost;
+
+		public Voznik(int starost) {
+			this.starost = starost;
+		}
+		
+		public int vrniStarost() {
+			return this.starost;
+		}
+	}
+	
+	/**
+	 * [Service Interface]
+	 *
+	 * The Service Interface declares the interface of the Service. The proxy must follow this 
+	 * interface to be able to disguise itself as a service object.
+	 */
+	 
+	public static interface Vozen {
+		void vozi() ;
+	}
+	
+	/**
+	 * [Service] - real object
+	 *
+	 * The Service is a class that provides some useful business logic.
+	 */
+	
+	public static class Avto implements Vozen {
+			
+		public void vozi() {
+			System.out.printf("%s%n", "car has been driven");
+		}
+	}
+	
+	/**
+	 * [Proxy]
+	 *
+	 * The Proxy class has a reference field that points to a service object. After the proxy
+	 * finishes its processing (e.g., lazy initialization, logging, access control, caching, etc.), 
+	 * it passes the request to the service object. Usually, proxies manage the full lifecycle
+	 * of their service objects.
+	 */
+	 
+	public static class ProxyAvto implements Vozen {
+		
+		private static final int STAROSTNA_MEJA = 18;
+		
+		private Voznik voznik;
+		private Vozen realAvto;
+
+		public ProxyAvto(Voznik voznik) {
+			this.voznik = voznik;
+			this.realAvto = new Avto();
+		}
+
+		public void vozi() {
+			if (voznik.vrniStarost() < STAROSTNA_MEJA) {
+				System.out.printf("%s %d let.%n", "premlad za voznjo", STAROSTNA_MEJA - voznik.vrniStarost());
+				return;
+			}
+			this.realAvto.vozi();
+		}
+	}
+	
+	/**
+	 * [Client]
+	 * 
+	 * The Client should work with both services and proxies via the same interface. This way you 
+	 * can pass a proxy into any code that expects a service object.
+	 */
+	
+	public static void main(String[] args) {
+		
+		Vozen avto = new ProxyAvto(new Voznik(15));
+		avto.vozi();
+
+		Vozen mercedes = new ProxyAvto(new Voznik(25));
+		mercedes.vozi();
+
+		Vozen fiat500 = new Avto(new Voznik(16));
+		fiat500.vozi();
+	}
+}
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/ProxyPseudocodeRG
+:ProxyPseudocodeRG rdf:type owl:NamedIndividual ,
+                            :SourceCode ;
+				   rdfs:label "Proxy Pseudocode"@en ;
+                   :programcode """// The interface of a remote service.
+				   
+interface ThirdPartyYouTubeLib is
+    method listVideos()
+    method getVideoInfo(id)
+    method downloadVideo(id)
+
+// The concrete implementation of a service connector. Methods
+// of this class can request information from YouTube. The speed
+// of the request depends on a user's internet connection as
+// well as YouTube's. The application will slow down if a lot of
+// requests are fired at the same time, even if they all request
+// the same information.
+
+class ThirdPartyYouTubeClass implements ThirdPartyYouTubeLib is
+    method listVideos() is
+        // Send an API request to YouTube.
+
+    method getVideoInfo(id) is
+        // Get metadata about some video.
+
+    method downloadVideo(id) is
+        // Download a video file from YouTube.
+
+// To save some bandwidth, we can cache request results and keep
+// them for some time. But it may be impossible to put such code
+// directly into the service class. For example, it could have
+// been provided as part of a third party library and/or defined
+// as `final`. That's why we put the caching code into a new
+// proxy class which implements the same interface as the
+// service class. It delegates to the service object only when
+// the real requests have to be sent.
+
+class CachedYouTubeClass implements ThirdPartyYouTubeLib is
+    private field service: ThirdPartyYouTubeLib
+    private field listCache, videoCache
+    field needReset
+
+    constructor CachedYouTubeClass(service: ThirdPartyYouTubeLib) is
+        this.service = service
+
+    method listVideos() is
+        if (listCache == null || needReset)
+            listCache = service.listVideos()
+        return listCache
+
+    method getVideoInfo(id) is
+        if (videoCache == null || needReset)
+            videoCache = service.getVideoInfo(id)
+        return videoCache
+
+    method downloadVideo(id) is
+        if (!downloadExists(id) || needReset)
+            service.downloadVideo(id)
+
+// The GUI class, which used to work directly with a service
+// object, stays unchanged as long as it works with the service
+// object through an interface. We can safely pass a proxy
+// object instead of a real service object since they both
+// implement the same interface.
+
+class YouTubeManager is
+    protected field service: ThirdPartyYouTubeLib
+
+    constructor YouTubeManager(service: ThirdPartyYouTubeLib) is
+        this.service = service
+
+    method renderVideoPage(id) is
+        info = service.getVideoInfo(id)
+        // Render the video page.
+
+    method renderListPanel() is
+        list = service.listVideos()
+        // Render the list of video thumbnails.
+
+    method reactOnUserInput() is
+        renderVideoPage()
+        renderListPanel()
+
+// The application can configure proxies on the fly.
+
+class Application is
+    method init() is
+        aYouTubeService = new ThirdPartyYouTubeClass()
+        aYouTubeProxy = new CachedYouTubeClass(aYouTubeService)
+        manager = new YouTubeManager(aYouTubeProxy)
+        manager.reactOnUserInput() """ ;
+                   rdfs:seeAlso "https://refactoring.guru/design-patterns/proxy"^^xsd:anyURI .
+
+
+
+
+
+:Singleton :hasSourceCode :SingletonJavaRG ,
+                          :SingletonPseudocodeRG .
+
+
+
+###  http://www.lavbic.net/onto/FDP/SingletonJavaRG
+:SingletonJavaRG rdf:type owl:NamedIndividual ,
+                          :SourceCode ;
+				 rdfs:label "Singleton Java source code"@en ;
+                 :language "Java" ;
+                 :programcode """package refactoring_guru.singleton.example.non_thread_safe;
+
+public final class Singleton {
+    private static Singleton instance;
+    public String value;
+
+    private Singleton(String value) {
+        // The following code emulates slow initialization.
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        this.value = value;
+    }
+
+    public static Singleton getInstance(String value) {
+        if (instance == null) {
+            instance = new Singleton(value);
+        }
+        return instance;
+    }
+}
+
+
+public class DemoSingleThread {
+    public static void main(String[] args) {
+        System.out.println(\"If you see the same value, then singleton was reused (yay!)\" + \"\\n\" +
+                \"If you see different values, then 2 singletons were created (booo!!)\" + \"\\n\\n\" +
+                \"RESULT:\" + \"\\n\");
+        Singleton singleton = Singleton.getInstance(\"FOO\");
+        Singleton anotherSingleton = Singleton.getInstance(\"BAR\");
+        System.out.println(singleton.value);
+        System.out.println(anotherSingleton.value);
+    }
+} """ ;
+                          rdfs:seeAlso "https://refactoring.guru/design-patterns/singleton"^^xsd:anyURI .
+
+
+###  http://www.lavbic.net/onto/FDP/SingletonPseudocodeRG
+:SingletonPseudocodeRG rdf:type owl:NamedIndividual ,
+                                :SourceCode ;
+					   rdfs:label "Singleton Pseudocode"@en ;
+                       :programcode """// The Database class defines the `getInstance` method that lets
+// clients access the same instance of a database connection
+// throughout the program.
+
+class Database is
+    // The field for storing the singleton instance should be
+    // declared static.
+    private static field instance: Database
+
+    // The singleton's constructor should always be private to
+    // prevent direct construction calls with the `new`
+    // operator.
+    private constructor Database() is
+        // Some initialization code, such as the actual
+        // connection to a database server.
+        // ...
+
+    // The static method that controls access to the singleton
+    // instance.
+	
+    public static method getInstance() is
+        if (Database.instance == null) then
+            acquireThreadLock() and then
+                // Ensure that the instance hasn't yet been
+                // initialized by another thread while this one
+                // has been waiting for the lock's release.
+                if (Database.instance == null) then
+                    Database.instance = new Database()
+        return Database.instance
+
+    // Finally, any singleton should define some business logic
+    // which can be executed on its instance.
+	
+    public method query(sql) is
+        // For instance, all database queries of an app go
+        // through this method. Therefore, you can place
+        // throttling or caching logic here.
+        // ...
+
+class Application is
+    method main() is
+        Database foo = Database.getInstance()
+        foo.query(\"SELECT ...\")
+        // ...
+        Database bar = Database.getInstance()
+        bar.query(\"SELECT ...\")
+        // The variable `bar` will contain the same object as
+        // the variable `foo`. """ ;
+                       rdfs:seeAlso "https://refactoring.guru/design-patterns/singleton"^^xsd:anyURI .
+
+
+
+:State :hasSourceCode :StateJavaRG ,
+                      :StatePseudocodeRG .
+
+
+###  http://www.lavbic.net/onto/FDP/StateJavaRG
+:StateJavaRG rdf:type owl:NamedIndividual ,
+                      :SourceCode ;
+			 rdfs:label "State Java source code"@en ;
+             :language "Java" ;
+             :programcode """
+/* State - Java Code Example */
+
+
+/**
+ * State interface declares the state-specific methods.
+ */
+
+interface State {
+	void setContext(Context context);
+	void writeContents(String value);
+}
+
+/**
+ * Concrete States provide their own implementations for the 
+ * state-specific methods.
+ */
+
+abstract class AbstractState implements State {
+	private Context context;
+	
+	public AbstractState() {
+		this.context = null;
+	}
+	
+	public void setContext(Context context) {
+		this.context = context;
+	}
+	
+	public void changeState(State newState) {
+		this.context.changeState(newState);
+	}
+}
+
+class LowerCaseState extends AbstractState {
+	
+	public LowerCaseState() {
+		super();
+	}
+	
+	@Override
+	public void writeContents(String value) {
+		System.out.println(value.toLowerCase());
+		if (Math.random() < 0.5)
+			changeState(new UpperCaseState());
+	}
+}
+
+class UpperCaseState extends AbstractState {
+	
+	public UpperCaseState() {
+		super();
+	}
+	
+	@Override
+	public void writeContents(String value) {
+		System.out.println(value.toUpperCase());
+		changeState(new HiddenState());
+	}
+}
+
+class HiddenState extends AbstractState {
+	
+	public HiddenState() {
+		super();
+	}
+	
+	@Override
+	public void writeContents(String value) {
+		value.chars().forEach((znak) -> { System.out.print('*'); });
+		System.out.println();
+		changeState(new LowerCaseState());
+	}
+}
+
+/**
+ * Context stores a reference to one of the concrete state objects and delegates 
+ * to it all state-specific work.
+ * Both <context> and <concrete states> can set the next state of the context.
+ */
+
+class Context {
+	
+	private static State[] states = { new LowerCaseState(), new UpperCaseState(), new HiddenState()};
+	private State state;
+	
+	public Context(State initialState) {
+		this.state = initialState;
+		this.state.setContext(this);
+	}
+	
+	public void changeState(State state) {
+		this.state = state;
+		this.state.setContext(this);
+	}
+	
+	public void writeContents(String name) {
+		this.state.writeContents(name);
+	}
+}
+
+/**
+ * Class [TestState] - client
+ */
+
+public class TestState {
+	
+	public static void main(String[] args) {
+		State initialState = new LowerCaseState();
+		Context context = new Context(initialState);
+		
+		context.writeContents("Monday");
+		context.writeContents("Tuesdy");
+		context.writeContents("Wednesday");
+		context.writeContents("Thursday");
+		context.writeContents("Friday");
+		context.writeContents("Saturday");
+		context.writeContents("Sunday");
+		
+	}
+}
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/StatePseudocodeRG
+:StatePseudocodeRG rdf:type owl:NamedIndividual ,
+                            :SourceCode ;
+				   rdfs:label "State Pseudocode"@en ;
+                   :programcode """// The AudioPlayer class acts as a context. It also maintains a
+// reference to an instance of one of the state classes that
+// represents the current state of the audio player.
+
+class AudioPlayer is
+    field state: State
+    field UI, volume, playlist, currentSong
+
+    constructor AudioPlayer() is
+        this.state = new ReadyState(this)
+
+        // Context delegates handling user input to a state
+        // object. Naturally, the outcome depends on what state
+        // is currently active, since each state can handle the
+        // input differently.
+        UI = new UserInterface()
+        UI.lockButton.onClick(this.clickLock)
+        UI.playButton.onClick(this.clickPlay)
+        UI.nextButton.onClick(this.clickNext)
+        UI.prevButton.onClick(this.clickPrevious)
+
+    // Other objects must be able to switch the audio player's
+    // active state.
+    method changeState(state: State) is
+        this.state = state
+
+    // UI methods delegate execution to the active state.
+    method clickLock() is
+        state.clickLock()
+    method clickPlay() is
+        state.clickPlay()
+    method clickNext() is
+        state.clickNext()
+    method clickPrevious() is
+        state.clickPrevious()
+
+    // A state may call some service methods on the context.
+    method startPlayback() is
+        // ...
+    method stopPlayback() is
+        // ...
+    method nextSong() is
+        // ...
+    method previousSong() is
+        // ...
+    method fastForward(time) is
+        // ...
+    method rewind(time) is
+        // ...
+
+
+// The base state class declares methods that all concrete
+// states should implement and also provides a backreference to
+// the context object associated with the state. States can use
+// the backreference to transition the context to another state.
+
+abstract class State is
+    protected field player: AudioPlayer
+
+    // Context passes itself through the state constructor. This
+    // may help a state fetch some useful context data if it's
+    // needed.
+    constructor State(player) is
+        this.player = player
+
+    abstract method clickLock()
+    abstract method clickPlay()
+    abstract method clickNext()
+    abstract method clickPrevious()
+
+
+// Concrete states implement various behaviors associated with a
+// state of the context.
+
+class LockedState extends State is
+
+    // When you unlock a locked player, it may assume one of two
+    // states.
+    method clickLock() is
+        if (player.playing)
+            player.changeState(new PlayingState(player))
+        else
+            player.changeState(new ReadyState(player))
+
+    method clickPlay() is
+        // Locked, so do nothing.
+
+    method clickNext() is
+        // Locked, so do nothing.
+
+    method clickPrevious() is
+        // Locked, so do nothing.
+
+
+// They can also trigger state transitions in the context.
+
+class ReadyState extends State is
+    method clickLock() is
+        player.changeState(new LockedState(player))
+
+    method clickPlay() is
+        player.startPlayback()
+        player.changeState(new PlayingState(player))
+
+    method clickNext() is
+        player.nextSong()
+
+    method clickPrevious() is
+        player.previousSong()
+
+
+class PlayingState extends State is
+    method clickLock() is
+        player.changeState(new LockedState(player))
+
+    method clickPlay() is
+        player.stopPlayback()
+        player.changeState(new ReadyState(player))
+
+    method clickNext() is
+        if (event.doubleclick)
+            player.nextSong()
+        else
+            player.fastForward(5)
+
+    method clickPrevious() is
+        if (event.doubleclick)
+            player.previous()
+        else
+            player.rewind(5) """ ;
+                   rdfs:seeAlso "https://refactoring.guru/design-patterns/state"^^xsd:anyURI .
+
+
+
+:Strategy :hasSourceCode :StrategyJavaRG ,
+                         :StrategyPseudocodeRG .
+
+
+###  http://www.lavbic.net/onto/FDP/StrategyJavaRG
+:StrategyJavaRG rdf:type owl:NamedIndividual ,
+                         :SourceCode ;
+				rdfs:label "Strategy Java source code"@en ;
+                :language "Java" ;
+                :programcode """
+/* Strategy - Java Code Example */
+
+
+import java.util.List;
+import java.util.ArrayList;
+
+
+/**
+ * Auxilary class - Product
+ */
+
+class Product {
+	
+	private static int nextProductID = 1;
+	
+	private int pid;
+	private String name;
+	private int price;
+	
+	public Product(String name, int price) {
+		this.pid = Product.nextProductID;
+		this.name = name;
+		this.price = price;
+		Product.nextProductID++;
+	}
+	
+	public int getPrice() {
+		return this.price;
+	}
+}
+
+
+/**
+ * [Strategy] interface
+ *
+ * The strategy interface declares operations common to all supported versions
+ * of some algorithm. The <context> uses this interface to call the algorithm
+ * defined by the concrete strategies.
+ *
+ */
+ 
+/**
+ * [Concrete strategy]
+ *
+ * Concrete strategies implement the algorithm while following the base strategy 
+ * interface. Here, two <concrerte strategies> are defined by functional interface.
+ *
+ */
+
+interface BillingStrategy {
+	
+	// cena v EUR brez centov
+	int getActualPrice(int rawPrice);
+	
+	// brez popusta
+	static BillingStrategy normalStrategy() {
+		return (polnaCena) -> polnaCena;
+	}
+	
+	// RUTAR strategija, vse -50% off
+	static BillingStrategy rutarStrategy() {
+		return (polnaCena) -> { return polnaCena / 2; };
+	}
+}
+
+/**
+ * [Context]
+ *
+ * The context defines the interface of interest to clients.
+ */
+
+class Customer {
+	
+	private final List<Integer> priceItems = new ArrayList<>();
+	private BillingStrategy strategy;
+	
+	public Customer(BillingStrategy strategy) {
+		this.strategy = strategy;
+	}
+
+	public void buy(Product product, int quantity) {
+		executeStrategy(product.getPrice(), quantity);
+	}
+	
+	/**
+	 * The context delegates some work to the strategy object instead of  
+     * implementing multiple versions of the algorithm on its own.
+	 */
+ 
+    private void executeStrategy(int price, int quantity) {
+		this.priceItems.add(this.strategy.getActualPrice(price * quantity));
+	}
+	
+	/** 
+	 * Usually the context accepts a strategy through the constructor, and 
+	 * also provides a setter so that the strategy can be switched at runtime.
+	 */
+	 
+	public void setStrategy(BillingStrategy strategy) {
+		this.strategy = strategy;
+	}
+	
+	public void printInvoice() {
+		int vsota = this.priceItems.stream().mapToInt(v -> v).sum();
+		System.out.printf("Total price: %d EUR%n", vsota);
+		this.priceItems.clear();
+	}
+}
+
+/**
+ * [TestStrategy] - client
+ *
+ * The client code picks a concrete strategy and passes it to the context. 
+ * The client should be aware of the differences between strategies in order 
+ * to make the right choice.
+ */
+
+public class TestStrategy {
+	
+	public static void main(String[] args) {
+		
+		// 1 - priprava strategij
+		
+		BillingStrategy normalStrategy = BillingStrategy.normalStrategy();
+		BillingStrategy rutarStrategy = BillingStrategy.rutarStrategy();
+		
+		
+		Customer ana = new Customer(normalStrategy);
+		// normalna cena
+		ana.buy(new Product("Keyboard", 100), 11);
+		// nakupi v zadnji minuti
+		ana.setStrategy(rutarStrategy);
+		ana.buy(new Product("Light", 100), 2);
+		
+		Customer joze = new Customer(rutarStrategy);
+		joze.buy(new Product("Game", 80), 1);
+		ana.printInvoice();
+		
+		// konec ugodnih nakupov
+		joze.setStrategy(normalStrategy);
+		joze.buy(new Product("Phone", 130), 2);
+		joze.buy(new Product("Tablet", 250), 1);
+		joze.printInvoice();
+	}
+	
+}
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/StrategyPseudocodeRG
+:StrategyPseudocodeRG rdf:type owl:NamedIndividual ,
+                               :SourceCode ;
+					  rdfs:label "Strategy Pseudocode"@en ;
+                      :programcode """// The strategy interface declares operations common to all
+// supported versions of some algorithm. The context uses this
+// interface to call the algorithm defined by the concrete
+// strategies.
+
+interface Strategy is
+    method execute(a, b)
+
+// Concrete strategies implement the algorithm while following
+// the base strategy interface. The interface makes them
+// interchangeable in the context.
+
+class ConcreteStrategyAdd implements Strategy is
+    method execute(a, b) is
+        return a + b
+
+class ConcreteStrategySubtract implements Strategy is
+    method execute(a, b) is
+        return a - b
+
+class ConcreteStrategyMultiply implements Strategy is
+    method execute(a, b) is
+        return a * b
+
+// The context defines the interface of interest to clients.
+
+class Context is
+    // The context maintains a reference to one of the strategy
+    // objects. The context doesn't know the concrete class of a
+    // strategy. It should work with all strategies via the
+    // strategy interface.
+    private strategy: Strategy
+
+    // Usually the context accepts a strategy through the
+    // constructor, and also provides a setter so that the
+    // strategy can be switched at runtime.
+    method setStrategy(Strategy strategy) is
+        this.strategy = strategy
+
+    // The context delegates some work to the strategy object
+    // instead of implementing multiple versions of the
+    // algorithm on its own.
+    method executeStrategy(int a, int b) is
+        return strategy.execute(a, b)
+
+
+// The client code picks a concrete strategy and passes it to
+// the context. The client should be aware of the differences
+// between strategies in order to make the right choice.
+
+class ExampleApplication is
+    method main() is
+        Create context object.
+
+        Read first number.
+        Read last number.
+        Read the desired action from user input.
+
+        if (action == addition) then
+            context.setStrategy(new ConcreteStrategyAdd())
+
+        if (action == subtraction) then
+            context.setStrategy(new ConcreteStrategySubtract())
+
+        if (action == multiplication) then
+            context.setStrategy(new ConcreteStrategyMultiply())
+
+        result = context.executeStrategy(First number, Second number)
+
+        Print result. """ ;
+                      rdfs:seeAlso "https://refactoring.guru/design-patterns/strategy"^^xsd:anyURI .
+
+
+
+
+
+:TemplateMethod :hasSourceCode :TemplateMethodJavaRG ,
+                               :TemplateMethodPseudocodeRG .
+						 
+						 
+						 
+###  http://www.lavbic.net/onto/FDP/TemplateMethodJavaRG
+:TemplateMethodJavaRG rdf:type owl:NamedIndividual ,
+                               :SourceCode ;
+					  rdfs:label "Template Method Java source code"@en ;
+                      :language "Java" ;
+                      :programcode """
+/* Template Method - Java Code Example */
+
+
+/**
+ * Eliminates the problem, where multiple classes have a lot of similar code.
+ * 
+ * The Template Method pattern suggests that you break down an algorithm into a series of steps, 
+ * turn these steps into methods, and put a series of calls to these methods inside a single 
+ * template method. 
+ * 
+ * The Template Method defines the steps of an algorithm and allows
+ * subclasses to provide the implementation for one or more steps.
+ *
+ * Real world use: Use with code generators. If the generated code follows the template method pattern, 
+ * the generated code will all be an abstract superclass. Provided that hand-written customizations are 
+ * confined to a subclass, the code generator can be run again without risk of over-writing these 
+ * modifications.
+ *
+ * <Factory Method> is a specialization of Template Method. 
+ */
+ 
+ 
+/** Sample: Overriding standard steps of an algorithm */
+
+
+import java.util.Scanner;
+
+/**
+ * Base class of social network.
+ */
+ 
+// [Abstract class]
+ 
+abstract class Network {
+	
+	private String userName;
+	private String password;
+	
+	public Network() {}
+	
+	public Network(String username, String password) {
+		this.userName = username;
+		this.password = password;
+	}
+	
+	// shares data on arbitrary social network
+	
+	/*
+	 * post() is our template method
+	 *
+	 * -- it serves as template for an algorithm - in this case an algorithm
+	 *    for posting a message to whatever social network
+	 * -- steps in algorithm are represented by a method (below)
+	 * -- some are handled by this class (regular methods) and some by the 
+	 *    subclass (abstract)
+	 */
+	
+	public boolean post(String message) {
+		// authentication before posting. Every network uses a different auth. method.
+		if (logIn(this.userName, this.password)) {
+			boolean result = sendData(message.getBytes());
+			logOut();
+			return result;
+		}
+		return false;
+	}
+	
+	abstract boolean logIn(String userName, String password);
+	abstract boolean sendData(byte[] data);
+	abstract void logOut();
+	
+	public static void simulateNetworkLatency() {
+		try {
+			int i = 0;
+			System.out.println();
+			while (i < 10) {
+				System.out.print(".");
+				Thread.sleep(500);
+				i++;
+			}
+		} catch (InterruptedException ex) {
+			ex.printStackTrace();
+		}
+	}	
+	
+	public String getUserName() {
+		return this.userName;
+	}
+	
+	public String getPassword() {
+		return this.password;
+	}
+}
+
+
+/**
+ * Class of social network
+ */
+
+// [Subclass]es
+
+class Facebook extends Network {
+	
+	public Facebook(String userName, String password) {
+		super(userName, password);
+	}
+	
+	@Override
+	public boolean logIn(String userName, String password) {
+		System.out.printf("%nChecking user's parameters%n");
+		System.out.printf("Name: %s%n", getUserName());
+		System.out.printf("Password: ");
+		for (int i = 0; i < this.getPassword().length(); i++) {
+			System.out.print("*");
+		}
+		Network.simulateNetworkLatency();
+		System.out.printf("%n%nYou are successfully logged in on Facebook%n");
+		return true;
+	}
+	
+	@Override
+	public boolean sendData(byte[] data) {
+		boolean messagePosted = true;
+		if (messagePosted)
+			System.out.printf("Message: '%s' was posted on Facebook%n", new String(data));
+		return messagePosted;
+	}	
+	
+	@Override
+	public void logOut() {
+		System.out.printf("User: '%s' was logged out from Facebook.%n", getUserName());
+	}
+}
+
+
+/**
+ * Class of social network
+ */
+
+class Twitter extends Network {
+
+	public Twitter(String userName, String password) {
+		super(userName, password);
+	}
+	
+	@Override
+	public boolean logIn(String userName, String password) {
+		System.out.printf("\nChecking user's parameters%n");
+		System.out.printf("Name: %n", this.getUserName());
+		System.out.printf("Password: ");
+		for (int i = 0; i < this.getPassword().length(); i++)
+			System.out.print("*");
+		Network.simulateNetworkLatency();
+		System.out.printf("%n%nYou are successfully logged in on Twitter%n");
+		return true;
+	}
+	
+	@Override
+	public boolean sendData(byte[] data) {
+		boolean messagePosted = true;
+		if (messagePosted)
+			System.out.printf("Message: '%s' was posted on Twitter%n", new String(data));
+		return messagePosted;
+	}
+
+	@Override
+	public void logOut() {
+		System.out.printf("User: '%s' was logged out from Twitter%n", getUserName());
+	}
+}
+
+
+
+/**
+ * [Client]
+ */
+ 
+public class TemplateMethodTest {
+	
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.printf("%nUser name: ");
+		String userName = sc.nextLine();
+		System.out.printf("Password: ");
+		String password = sc.nextLine();
+		
+		System.out.printf("Comment on post: ");
+		String message = sc.nextLine();
+		
+		System.out.printf("%nChoose social network.%n%s%n%s%n", "1 - Facebook", "2 - Twitter");
+		int choice = sc.nextInt();
+		
+		Network network = (choice == 1) ? new Facebook(userName, password) : new Twitter(userName, password);
+		network.post(message);
+		
+	}
+}
+
+				      """ .
+
+
+###  http://www.lavbic.net/onto/FDP/TemplateMethodPseudocodeRG
+:TemplateMethodPseudocodeRG rdf:type owl:NamedIndividual ,
+                                     :SourceCode ;
+							rdfs:label "TemplateMethod Pseudocode"@en ;
+                            :programcode """// The abstract class defines a template method that contains a
+// skeleton of some algorithm composed of calls, usually to
+// abstract primitive operations. Concrete subclasses implement
+// these operations, but leave the template method itself
+// intact.
+
+class GameAI is
+    // The template method defines the skeleton of an algorithm.
+    method turn() is
+        collectResources()
+        buildStructures()
+        buildUnits()
+        attack()
+
+    // Some of the steps may be implemented right in a base
+    // class.
+    method collectResources() is
+        foreach (s in this.builtStructures) do
+            s.collect()
+
+    // And some of them may be defined as abstract.
+    abstract method buildStructures()
+    abstract method buildUnits()
+
+    // A class can have several template methods.
+    method attack() is
+        enemy = closestEnemy()
+        if (enemy == null)
+            sendScouts(map.center)
+        else
+            sendWarriors(enemy.position)
+
+    abstract method sendScouts(position)
+    abstract method sendWarriors(position)
+
+// Concrete classes have to implement all abstract operations of
+// the base class but they must not override the template method
+// itself.
+
+class OrcsAI extends GameAI is
+    method buildStructures() is
+        if (there are some resources) then
+            // Build farms, then barracks, then stronghold.
+
+    method buildUnits() is
+        if (there are plenty of resources) then
+            if (there are no scouts)
+                // Build peon, add it to scouts group.
+            else
+                // Build grunt, add it to warriors group.
+
+    // ...
+
+    method sendScouts(position) is
+        if (scouts.length > 0) then
+            // Send scouts to position.
+
+    method sendWarriors(position) is
+        if (warriors.length > 5) then
+            // Send warriors to position.
+
+// Subclasses can also override some operations with a default
+// implementation.
+
+class MonstersAI extends GameAI is
+    method collectResources() is
+        // Monsters don't collect resources.
+
+    method buildStructures() is
+        // Monsters don't build structures.
+
+    method buildUnits() is
+        // Monsters don't build units. """ ;
+                            rdfs:seeAlso "https://refactoring.guru/design-patterns/template-method"^^xsd:anyURI .
+
+
+
+
+:Visitor :hasSourceCode :VisitorJavaRG ,
+                        :VisitorPseudocodeRG .
+
+
+
+###  http://www.lavbic.net/onto/FDP/VisitorJavaRG
+:VisitorJavaRG rdf:type owl:NamedIndividual ,
+                        :SourceCode ;
+			   rdfs:label "Visitor Java source code"@en ;
+               :language "Java" ;
+               :programcode """
+/* Visitor - Java Code Example */
+
+/**
+ * [Visitor]
+ * 
+ * The Visitor interface declares a set of visiting methods that can take elements
+ * of object structure as arguments. The <signature> of a visiting method lets the
+ * visitor identify the exact class of the element that it's dealing with.
+ * 
+ */
+
+interface ExpressionVisitor {
+	
+	void visit(Literal literal);
+	void visit(Addition addition);
+}
+
+/**
+ * 2.1 [Element]
+ * 
+ * The element interface declares an 'accept' method for "accepting" visitors. 
+ * It takes the base visitor interface as an argument.
+ * 
+ */
+
+interface Expression {
+	// tole metodo moramo dodati obstojecim objektom
+	void accept(ExpressionVisitor visitor);
+}
+
+/**
+ * 2.2 [Concrete Elements]
+ */
+
+class Literal implements Expression {
+	private double value;
+	
+	public Literal(double value) {
+		this.value = value;
+	}
+	
+	public double getValue() {
+		return this.value;
+	}
+	
+	@Override
+	public void accept(ExpressionVisitor visitor) {
+		visitor.visit(this);
+	}
+}
+            
+class Addition implements Expression {
+	private Expression left;
+	private Expression right;
+	
+	public Addition(Expression left, Expression right) {
+		this.left = left;
+		this.right = right;
+	}
+	
+	public Expression getLeft() {
+		return this.left;
+	}
+	
+	public Expression getRight() {
+		return this.right;
+	}
+	
+	@Override
+	public void accept(ExpressionVisitor visitor) {
+		visitor.visit(this);
+	}
+}
+
+/**
+ * [Concrete Visitor]
+ *
+ * Concrete Visitor implements several versions of the same behaviors, 
+ * tailored for different concrete element classes.
+ * 
+ */
+
+class ExpressionPrinter implements ExpressionVisitor {
+	
+	// Visitor methods know the concrete type of the elements
+	// that it works with (ve, s kakimi objekti ima opravka). 
+	
+	private StringBuilder sb;
+	
+	public ExpressionPrinter(StringBuilder sb) {
+		this.sb = sb;
+	}
+	
+	@Override
+	public void visit(Literal literal) {
+		sb.append(literal.getValue());
+	}
+	
+	@Override
+	public void visit(Addition addition) {
+		sb.append("(");
+		Expression left = addition.getLeft();
+		left.accept(this);
+		sb.append(" + ");
+		Expression right = addition.getRight();
+		right.accept(this);
+		sb.append(")");
+	}
+	
+}
+
+/**
+ * [Client]
+ */
+
+public class IzpisDrevesa {
+	
+	public static void main(String[] args) {
+		
+		// (1 + 2) + 3
+		Expression expression = new Addition(
+			new Addition(new Literal(1), new Literal(2)),
+			new Literal(3)
+		);
+		
+		var sb = new StringBuilder();
+		ExpressionPrinter izpisovalnik = new ExpressionPrinter(sb);
+		expression.accept(izpisovalnik);
+		
+		System.out.println(sb);
+	}
+}
+
+				 """ .
+
+
+###  http://www.lavbic.net/onto/FDP/VisitorPseudocodeRG
+:VisitorPseudocodeRG rdf:type owl:NamedIndividual ,
+                              :SourceCode ;
+					 rdfs:label "Visitor Pseudocode"@en ;
+                     :programcode """// The element interface declares an `accept` method that takes
+// the base visitor interface as an argument.
+
+interface Shape is
+    method move(x, y)
+    method draw()
+    method accept(v: Visitor)
+
+// Each concrete element class must implement the `accept`
+// method in such a way that it calls the visitor's method that
+// corresponds to the element's class.
+
+class Dot implements Shape is
+    // ...
+
+    // Note that we're calling `visitDot`, which matches the
+    // current class name. This way we let the visitor know the
+    // class of the element it works with.
+    method accept(v: Visitor) is
+        v.visitDot(this)
+
+class Circle implements Shape is
+    // ...
+    method accept(v: Visitor) is
+        v.visitCircle(this)
+
+class Rectangle implements Shape is
+    // ...
+    method accept(v: Visitor) is
+        v.visitRectangle(this)
+
+class CompoundShape implements Shape is
+    // ...
+    method accept(v: Visitor) is
+        v.visitCompoundShape(this)
+
+
+// The Visitor interface declares a set of visiting methods that
+// correspond to element classes. The signature of a visiting
+// method lets the visitor identify the exact class of the
+// element that it's dealing with.
+
+interface Visitor is
+    method visitDot(d: Dot)
+    method visitCircle(c: Circle)
+    method visitRectangle(r: Rectangle)
+    method visitCompoundShape(cs: CompoundShape)
+
+// Concrete visitors implement several versions of the same
+// algorithm, which can work with all concrete element classes.
+//
+// You can experience the biggest benefit of the Visitor pattern
+// when using it with a complex object structure such as a
+// Composite tree. In this case, it might be helpful to store
+// some intermediate state of the algorithm while executing the
+// visitor's methods over various objects of the structure.
+
+class XMLExportVisitor implements Visitor is
+    method visitDot(d: Dot) is
+        // Export the dot's ID and center coordinates.
+
+    method visitCircle(c: Circle) is
+        // Export the circle's ID, center coordinates and
+        // radius.
+
+    method visitRectangle(r: Rectangle) is
+        // Export the rectangle's ID, left-top coordinates,
+        // width and height.
+
+    method visitCompoundShape(cs: CompoundShape) is
+        // Export the shape's ID as well as the list of its
+        // children's IDs.
+
+
+// The client code can run visitor operations over any set of
+// elements without figuring out their concrete classes. The
+// accept operation directs a call to the appropriate operation
+// in the visitor object.
+
+class Application is
+    field allShapes: array of Shapes
+
+    method export() is
+        exportVisitor = new XMLExportVisitor()
+
+        foreach (shape in allShapes) do
+            shape.accept(exportVisitor) """ ;
+                     rdfs:seeAlso "https://refactoring.guru/design-patterns/visitor"^^xsd:anyURI .
