@@ -8,7 +8,6 @@
 :AbstractFactory :hasSourceCode :AbstractFactoryJavaRG ,
                                 :AbstractFactoryPseudocodeRG .
 
-###  http://www.lavbic.net/onto/FDP/AbstractFactoryJavaRG
 :AbstractFactoryJavaRG rdf:type owl:NamedIndividual ,
                                 :SourceCode ;
                        :language "Java" ;
@@ -174,9 +173,9 @@ class AbstractFactoryTest {
 
 				 """ .
 
-###  http://www.lavbic.net/onto/FDP/AbstractFactoryPseudocodeRG
 :AbstractFactoryPseudocodeRG rdf:type owl:NamedIndividual ,
                                       :SourceCode ;
+                             :language "pseudocode" ;
                              rdfs:label "Abstract Factory Pseudocode" ;
                              :programcode """// The abstract factory interface declares a set of methods that
 // return different abstract products. These products are called
@@ -278,7 +277,6 @@ class ApplicationConfigurator is
 :Adapter :hasSourceCode :AdapterJavaRG ,
                         :AdapterPseudocodeRG .
 						
-###  http://www.lavbic.net/onto/FDP/AdapterJavaRG
 :AdapterJavaRG rdf:type owl:NamedIndividual ,
                         :SourceCode ;
                rdfs:label "Adapter Java source code"@en ;
@@ -424,9 +422,9 @@ public class AdapterDemo {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/AdapterPseudocodeRG
 :AdapterPseudocodeRG rdf:type owl:NamedIndividual ,
                               :SourceCode ;
+                     :language "pseudocode" ;
                      rdfs:label "Adapter Pseudocode"@en ;
                      :programcode """// Say you have two classes with compatible interfaces:
 // RoundHole and RoundPeg.
@@ -494,7 +492,6 @@ hole.fits(large_sqpeg_adapter) // false""" ;
                        :BridgePseudocodeRG .
 
 
-###  http://www.lavbic.net/onto/FDP/BridgeJavaRG
 :BridgeJavaRG rdf:type owl:NamedIndividual ,
                        :SourceCode ;
               rdfs:label "Bridge Java source code"@en ;
@@ -788,9 +785,9 @@ public class DevicesRemotesTest {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/BridgePseudocodeRG
 :BridgePseudocodeRG rdf:type owl:NamedIndividual ,
                              :SourceCode ;
+                    :language "pseudocode" ;
                     rdfs:label "Bridge Pseudocode"@en ;
                     :programcode """// The \"abstraction\" defines the interface for the \"control\"
 // part of the two class hierarchies. It maintains a reference
@@ -861,7 +858,6 @@ remote = new AdvancedRemoteControl(radio)""" ;
                         :BuilderPseudocodeRG .
 						
 						
-###  http://www.lavbic.net/onto/FDP/BuilderJavaRG
 :BuilderJavaRG rdf:type owl:NamedIndividual ,
                         :SourceCode ;
                rdfs:label "Builder Java source code"@en ;
@@ -1265,9 +1261,9 @@ public class TestBuilder {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/BuilderPseudocodeRG
 :BuilderPseudocodeRG rdf:type owl:NamedIndividual ,
                               :SourceCode ;
+                     :language "pseudocode" ;
                      rdfs:label "Builder Pseudocode"@en ;
                      :programcode """// Using the Builder pattern makes sense only when your products
 // are quite complex and require extensive configuration. The
@@ -1421,7 +1417,6 @@ class Application is
 
 
 
-###  http://www.lavbic.net/onto/FDP/ChainOfResponsibilityJavaRG
 :ChainOfResponsibilityJavaRG rdf:type owl:NamedIndividual ,
                                       :SourceCode ;
                              rdfs:label "Chain of Responsibility Java source code"@en ;
@@ -1708,9 +1703,9 @@ public class MiddlewareTest {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/ChainOfResponsibilityPseudocodeRG
 :ChainOfResponsibilityPseudocodeRG rdf:type owl:NamedIndividual ,
                                             :SourceCode ;
+                                   :language "pseudocode" ;
                                    rdfs:label "Chain of Responsibility Pseudocode"@en ;
                                    :programcode """// The handler interface declares a method for executing a
 // request.
@@ -1806,7 +1801,6 @@ class Application is
                         :CommandPseudocodeRG .
 
 
-###  http://www.lavbic.net/onto/FDP/CommandJavaRG
 :CommandJavaRG rdf:type owl:NamedIndividual ,
                         :SourceCode ;
 			   rdfs:label "Command Java source code"@en ;
@@ -2119,9 +2113,9 @@ public class TextEditorCommandsDemo {
                 rdfs:seeAlso "https://refactoring.guru/design-patterns/command"^^xsd:anyURI .
 
 
-###  http://www.lavbic.net/onto/FDP/CommandPseudocodeRG
 :CommandPseudocodeRG rdf:type owl:NamedIndividual ,
                               :SourceCode ;
+                     :language "pseudocode" ;
 					 rdfs:label "Command Pseudocode"@en ;
                      :programcode """// The base command class defines the common interface for all
 // concrete commands.
@@ -2267,7 +2261,6 @@ class Application is
                           :CompositePseudocodeRG .
 						  
 
-###  http://www.lavbic.net/onto/FDP/CompositeJavaRG
 :CompositeJavaRG rdf:type owl:NamedIndividual ,
                           :SourceCode ;
 				 rdfs:label "Composite Java source code"@en ;
@@ -2776,9 +2769,9 @@ public class TestComposite {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/CompositePseudocodeRG
 :CompositePseudocodeRG rdf:type owl:NamedIndividual ,
                                 :SourceCode ;
+                       :language "pseudocode" ;
 					   rdfs:label "Composite Pseudocode"@en ;
                        :programcode """// The component interface declares common operations for both
 // simple and complex objects of a composition.
@@ -2877,7 +2870,6 @@ class ImageEditor is
                           :DecoratorPseudocodeRG .
 
 
-###  http://www.lavbic.net/onto/FDP/DecoratorJavaRG
 :DecoratorJavaRG rdf:type owl:NamedIndividual ,
                           :SourceCode ;
 			     rdfs:label "Decorator Java source code"@en ;
@@ -3070,9 +3062,9 @@ public class DecoratedWindowTest {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/DecoratorPseudocodeRG
 :DecoratorPseudocodeRG rdf:type owl:NamedIndividual ,
                                 :SourceCode ;
+                       :language "pseudocode" ;
 					   rdfs:label "Decorator Pseudocode"@en ;
                        :programcode """// The component interface defines operations that can be
 // altered by decorators.
@@ -3213,7 +3205,6 @@ class ApplicationConfigurator is
 
 
 
-###  http://www.lavbic.net/onto/FDP/FacadeJavaRG
 :FacadeJavaRG rdf:type owl:NamedIndividual ,
                        :SourceCode ;
 			  rdfs:label "Facade Java source code"@en ;
@@ -3379,9 +3370,9 @@ public class FacadeDemo {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/FacadePseudocodeRG
 :FacadePseudocodeRG rdf:type owl:NamedIndividual ,
                              :SourceCode ;
+                    :language "pseudocode" ;
 					rdfs:label "Facade Pseudocode"@en ;
                     :programcode """// These are some of the classes of a complex 3rd-party video
 // conversion framework. We don't control that code, therefore
@@ -3443,7 +3434,6 @@ class Application is
 
 
 
-###  http://www.lavbic.net/onto/FDP/FactoryMethodJavaRG
 :FactoryMethodJavaRG rdf:type owl:NamedIndividual ,
                               :SourceCode ;
 					 rdfs:label "Factory Method Java source code"@en ;
@@ -3668,9 +3658,9 @@ public class PizzaFactoryTest {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/FactoryMethodPseudocodeRG
 :FactoryMethodPseudocodeRG rdf:type owl:NamedIndividual ,
                                     :SourceCode ;
+                           :language "pseudocode" ;
 						   rdfs:label "Factory Method Pseudocode"@en ;
                            :programcode """
 // The creator class declares the factory method that must
@@ -3763,7 +3753,6 @@ class Application is
 						  
 
 
-###  http://www.lavbic.net/onto/FDP/FlyweightJavaRG
 :FlyweightJavaRG rdf:type owl:NamedIndividual ,
                           :SourceCode ;
 				 rdfs:label "Flyweight Java source code"@en ;
@@ -3886,9 +3875,9 @@ public class TestFlyweight {
                        rdfs:seeAlso "https://refactoring.guru/design-patterns/flyweight"^^xsd:anyURI .
 
 
-###  http://www.lavbic.net/onto/FDP/FlyweightPseudocodeRG
 :FlyweightPseudocodeRG rdf:type owl:NamedIndividual ,
                                 :SourceCode ;
+                       :language "pseudocode" ;
 					   rdfs:label "Flyweight Pseudocode"@en ;
                        :programcode """// The flyweight class contains a portion of the state of a
 // tree. These fields store values that are unique for each
@@ -3956,7 +3945,6 @@ class Forest is
                          :IteratorPseudocodeRG .
 						 
 
-###  http://www.lavbic.net/onto/FDP/IteratorJavaRG
 :IteratorJavaRG rdf:type owl:NamedIndividual ,
                          :SourceCode ;
 				rdfs:label "Iterator Java source code"@en ;
@@ -4384,9 +4372,9 @@ public class Demo {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/IteratorPseudocodeRG
 :IteratorPseudocodeRG rdf:type owl:NamedIndividual ,
                                :SourceCode ;
+                      :language "pseudocode" ;
 					  rdfs:label "Iterator Pseudocode"@en ;
                       :programcode """// The collection interface must declare a factory method for
 // producing iterators. You can declare several methods if there
@@ -4501,7 +4489,6 @@ class Application is
                          :MediatorPseudocodeRG .
 
 
-###  http://www.lavbic.net/onto/FDP/MediatorJavaRG
 :MediatorJavaRG rdf:type owl:NamedIndividual ,
                          :SourceCode ;
 				rdfs:label "Mediator Java source code"@en ;
@@ -5100,9 +5087,9 @@ public class MediatorPatternDemo {
 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/MediatorPseudocodeRG
 :MediatorPseudocodeRG rdf:type owl:NamedIndividual ,
                                :SourceCode ;
+                      :language "pseudocode" ;
 					  rdfs:label "Mediator Pseudocode"@en ;
                       :programcode """// The mediator interface declares a method used by components
 // to notify the mediator about various events. The mediator may
@@ -5198,7 +5185,6 @@ class Checkbox extends Component is
                         :MementoPseudocodeRG .
 
 
-###  http://www.lavbic.net/onto/FDP/MementoJavaRG
 :MementoJavaRG rdf:type owl:NamedIndividual ,
                         :SourceCode ;
 			   rdfs:label "Memento Java source code"@en ;
@@ -5342,9 +5328,9 @@ public class Caretaker {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/MementoPseudocodeRG
 :MementoPseudocodeRG rdf:type owl:NamedIndividual ,
                               :SourceCode ;
+                     :language "pseudocode" ;
 					 rdfs:label "Memento Pseudocode"@en ;
                      :programcode """// The originator holds some important data that may change over
 // time. It also defines a method for saving its state inside a
@@ -5416,7 +5402,6 @@ class Command is
 
 
 
-###  http://www.lavbic.net/onto/FDP/ObserverJavaRG
 :ObserverJavaRG rdf:type owl:NamedIndividual ,
                          :SourceCode ;
 				rdfs:label "Observer Java source code"@en ;
@@ -5615,9 +5600,9 @@ public class ObserverTest {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/ObserverPseudocodeRG
 :ObserverPseudocodeRG rdf:type owl:NamedIndividual ,
                                :SourceCode ;
+                      :language "pseudocode" ;
 					  rdfs:label "Observer Pseudocode"@en ;
                       :programcode """// The base publisher class includes subscription management
 // code and notification methods.
@@ -5722,7 +5707,6 @@ class Application is
                           :PrototypePseudocodeRG .
 
 
-###  http://www.lavbic.net/onto/FDP/PrototypeJavaRG
 :PrototypeJavaRG rdf:type owl:NamedIndividual ,
                           :SourceCode ;
 				 rdfs:label "Prototype Java source code"@en ;
@@ -5888,9 +5872,9 @@ public class TestPrototype {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/PrototypePseudocodeRG
 :PrototypePseudocodeRG rdf:type owl:NamedIndividual ,
                                 :SourceCode ;
+                       :language "pseudocode" ;
 					   rdfs:label "Prototype Pseudocode"@en ;
                        :programcode """// Base prototype.
 abstract class Shape is
@@ -5996,7 +5980,6 @@ class Application is
                       :ProxyPseudocodeRG .
 
 
-###  http://www.lavbic.net/onto/FDP/ProxyJavaRG
 :ProxyJavaRG rdf:type owl:NamedIndividual ,
                       :SourceCode ;
 			 rdfs:label "Proxy Java source code"@en ;
@@ -6098,9 +6081,9 @@ public class ProxyTest {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/ProxyPseudocodeRG
 :ProxyPseudocodeRG rdf:type owl:NamedIndividual ,
                             :SourceCode ;
+                   :language "pseudocode" ;
 				   rdfs:label "Proxy Pseudocode"@en ;
                    :programcode """// The interface of a remote service.
 				   
@@ -6200,7 +6183,6 @@ class Application is
 
 
 
-###  http://www.lavbic.net/onto/FDP/SingletonJavaRG
 :SingletonJavaRG rdf:type owl:NamedIndividual ,
                           :SourceCode ;
 				 rdfs:label "Singleton Java source code"@en ;
@@ -6244,9 +6226,9 @@ public class DemoSingleThread {
                           rdfs:seeAlso "https://refactoring.guru/design-patterns/singleton"^^xsd:anyURI .
 
 
-###  http://www.lavbic.net/onto/FDP/SingletonPseudocodeRG
 :SingletonPseudocodeRG rdf:type owl:NamedIndividual ,
                                 :SourceCode ;
+                       :language "pseudocode" ;
 					   rdfs:label "Singleton Pseudocode"@en ;
                        :programcode """// The Database class defines the `getInstance` method that lets
 // clients access the same instance of a database connection
@@ -6304,7 +6286,6 @@ class Application is
                       :StatePseudocodeRG .
 
 
-###  http://www.lavbic.net/onto/FDP/StateJavaRG
 :StateJavaRG rdf:type owl:NamedIndividual ,
                       :SourceCode ;
 			 rdfs:label "State Java source code"@en ;
@@ -6433,9 +6414,9 @@ public class TestState {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/StatePseudocodeRG
 :StatePseudocodeRG rdf:type owl:NamedIndividual ,
                             :SourceCode ;
+                   :language "pseudocode" ;
 				   rdfs:label "State Pseudocode"@en ;
                    :programcode """// The AudioPlayer class acts as a context. It also maintains a
 // reference to an instance of one of the state classes that
@@ -6575,7 +6556,6 @@ class PlayingState extends State is
                          :StrategyPseudocodeRG .
 
 
-###  http://www.lavbic.net/onto/FDP/StrategyJavaRG
 :StrategyJavaRG rdf:type owl:NamedIndividual ,
                          :SourceCode ;
 				rdfs:label "Strategy Java source code"@en ;
@@ -6730,9 +6710,9 @@ public class TestStrategy {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/StrategyPseudocodeRG
 :StrategyPseudocodeRG rdf:type owl:NamedIndividual ,
                                :SourceCode ;
+                      :language "pseudocode" ;
 					  rdfs:label "Strategy Pseudocode"@en ;
                       :programcode """// The strategy interface declares operations common to all
 // supported versions of some algorithm. The context uses this
@@ -6815,7 +6795,6 @@ class ExampleApplication is
 						 
 						 
 						 
-###  http://www.lavbic.net/onto/FDP/TemplateMethodJavaRG
 :TemplateMethodJavaRG rdf:type owl:NamedIndividual ,
                                :SourceCode ;
 					  rdfs:label "Template Method Java source code"@en ;
@@ -7023,9 +7002,9 @@ public class TemplateMethodTest {
 				      """ .
 
 
-###  http://www.lavbic.net/onto/FDP/TemplateMethodPseudocodeRG
 :TemplateMethodPseudocodeRG rdf:type owl:NamedIndividual ,
                                      :SourceCode ;
+                            :language "pseudocode" ;
 							rdfs:label "TemplateMethod Pseudocode"@en ;
                             :programcode """// The abstract class defines a template method that contains a
 // skeleton of some algorithm composed of calls, usually to
@@ -7110,7 +7089,6 @@ class MonstersAI extends GameAI is
 
 
 
-###  http://www.lavbic.net/onto/FDP/VisitorJavaRG
 :VisitorJavaRG rdf:type owl:NamedIndividual ,
                         :SourceCode ;
 			   rdfs:label "Visitor Java source code"@en ;
@@ -7252,9 +7230,9 @@ public class IzpisDrevesa {
 				 """ .
 
 
-###  http://www.lavbic.net/onto/FDP/VisitorPseudocodeRG
 :VisitorPseudocodeRG rdf:type owl:NamedIndividual ,
                               :SourceCode ;
+                     :language "pseudocode" ;
 					 rdfs:label "Visitor Pseudocode"@en ;
                      :programcode """// The element interface declares an `accept` method that takes
 // the base visitor interface as an argument.
