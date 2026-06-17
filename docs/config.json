@@ -1,0 +1,6 @@
+{
+  "useGraphDb": false,
+  "graphdbRepositoryUrl": "http://localhost:7200/repositories/fdp",
+  "rdfFiles": ["./FDP.ttl"],
+  "llmSearchApiUrl": "http://localhost:3001"
+}
