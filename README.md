@@ -1,17 +1,60 @@
-# Formal Design Patterns
+# Formal Design Patterns (FDP)
 
 > **Dejan Lavbič** and **Marko Poženel**
+
+Formal Design Patterns (FDP) is a relation-aware OWL knowledge graph for Gang of Four design patterns. It models patterns, participants, structures, tradeoffs, and typed relationships so that developers, students, and educators can explore, compare, select, and explain design patterns with ontology-grounded LLM support.
+
+**Links**
+
+- [FDP Atlas: interactive ontology visualizer](https://dejanl.github.io/FDP/)
+- [Current ontology TTL](https://dejanl.github.io/FDP/FDP.ttl)
+
+## Research Context
+
+This repository accompanies the research article **“A Relation-Aware Knowledge Graph for Software Design Pattern Selection and Explanation”** by **Dejan Lavbič** and **Marko Poženel**.
+
+The work contributes:
+
+- the FDP ontology, a relation-aware OWL model of GoF design patterns;
+- FDP Atlas, an interactive visualization and querying tool;
+- a controlled four-mode benchmark that isolates the effect of explicit ontology relations on LLM-supported pattern recommendation and explanation.
+
+## What The Ontology Contains
+
+FDP models all **22 GoF design patterns** as ontology individuals and connects them through explicit, typed semantic relations. Its current published version contains:
+
+- **80 classes**, **51 object properties**, **6 data properties**, and **13 annotation properties**;
+- **255 individuals** and **2,687 axioms**;
+- **529 object property assertions** that encode pattern and structural relations.
+
+The relation model covers six categories: alternatives, composition, evolutionary transitions, structural similarity, structural characteristics, and pattern aspects such as pros, cons, and design focus.
+
+![Unified architecture and evaluated grounding scenarios](assets/readme/architecture.png)
+
+*Unified architecture and evaluated grounding scenarios for ontology-grounded design pattern learning support.*
+
+## FDP Atlas
+
+[FDP Atlas](https://dejanl.github.io/FDP/) is an Angular web application for exploring the ontology as an interactive graph of classes, properties, individuals, and pattern relations. It can run as a static GitHub Pages deployment by loading `docs/FDP.ttl`, while local deployments can also connect to a GraphDB repository.
+
+When the optional backend API is available, FDP Atlas supports LLM-assisted natural-language querying. The LLM is not used as an open-ended chat source; instead, it receives ontology-derived candidate patterns, labels, intents, and relation facts, and returns a schema-constrained recommendation with confidence, explanation, and alternatives.
+
+![FDP Atlas showing the Observer pattern neighborhood](assets/readme/fdp-atlas-observer.png)
+
+*FDP Atlas displaying the neighborhood of the `Observer` pattern, including related patterns, structural aspects, and participants.*
 
 ## Evaluation
 
 ### Summary
 
-The benchmark evaluates whether explicit relationships between GoF design patterns improve LLM-supported pattern selection and reasoning. It contains 45 tasks across three task types (`distinguish`, `alternative`, and `combine`), including 30 realistic `design-choice` tasks and 15 `relation-critical` tasks. Using `gpt-4.1-mini`, each task was evaluated three times at temperature `0` across four context modes (`1-llm-only`, `2-flat-descriptions`, `3-ontology-context`, `4-explicit-relations`).
+The benchmark evaluates whether explicit relationships between GoF design patterns improve LLM-supported pattern selection and reasoning. It contains **45 tasks** across three task types (`distinguish`, `alternative`, and `combine`), including 30 realistic `design-choice` tasks and 15 `relation-critical` tasks. Using `gpt-4.1-mini`, each task was evaluated three times at temperature `0` across four context modes: `1-llm-only`, `2-flat`, `3-ontology-no-relations`, and `4-ontology`.
 
-- Explicit ontology relations achieved the strongest results: **94.81% selection accuracy**, **84.44% relation-critical accuracy**, and **97.62% hard-task accuracy**.
-- Without explicit relations, relation-critical accuracy reached **37.78%** for LLM-only, **57.78%** with flat descriptions, and **48.89%** with ontology context alone. This indicates that the improvement primarily came from modeled relationships rather than additional context.
+- The full relation-aware ontology mode achieved the strongest results: **94.81% selection accuracy**, **84.44% relation-critical accuracy**, and **78.52% distractor rejection**.
+- Without explicit relations, relation-critical accuracy reached **37.78%** for `1-llm-only`, **57.78%** for `2-flat`, and **48.89%** for `3-ontology-no-relations`.
+- The strongest gains appeared on relation-intensive tasks, especially `combine` tasks, where explicit relations such as `canBeUsedWith` and `canBenefitFrom` directly support pattern composition reasoning.
 
-### Test Tasks
+<details>
+<summary>Benchmark task set</summary>
 
 | ID         | Task type, difficulty and eval group   | Decisive constraint                                                                                     | Base and candidate patterns                                             | Acceptable patterns | Expected relations                                               |
 | ---------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------- | ---------------------------------------------------------------- |
@@ -60,3 +103,11 @@ The benchmark evaluates whether explicit relationships between GoF design patter
 | c&#8209;13 | combine, hard, design-choice           | The problem is creating compatible objects within the subsystem.                                        | Facade / Adapter, Proxy, Abstract Factory, Bridge                       | Abstract Factory    | canServeAsAlternative, isFocusedOn, definesSimplifiedInterface   |
 | c&#8209;14 | combine, hard, relation-critical       | The problem is creating concrete strategies, not modeling state or commands.                            | Strategy / State, Command, Template Method, Factory Method              | Factory Method      | canServeAsAlternative                                            |
 | c&#8209;15 | combine, hard, design-choice           | The solution starts from an existing tree rather than building it from scratch or merely traversing it. | Composite / Prototype, Builder, Iterator, Visitor                       | Prototype           | canBeUsedWith                                                    |
+
+</details>
+
+## Citation
+
+If you use FDP in research, please cite:
+
+> Dejan Lavbič and Marko Poženel. *A Relation-Aware Knowledge Graph for Software Design Pattern Selection and Explanation*. Citation details will be updated after publication.
